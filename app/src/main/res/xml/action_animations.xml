@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AnimatedItem xmlns:android="http://schemas.android.com/apk/res/android" name="ActionAnimations_Name" android:id="@+id/action_animations">
+	<AnimationsNb>3</AnimationsNb>
+	<AnimationList>
+		<Animation>
+			<AnimationType>Move</AnimationType>
+			<AnimationOrientation>NONE</AnimationOrientation>
+			<AnimationFilename>action_move</AnimationFilename>
+		</Animation>
+		<Animation>
+			<AnimationType>Attack</AnimationType>
+			<AnimationOrientation>NONE</AnimationOrientation>
+			<AnimationFilename>action_attack</AnimationFilename>
+		</Animation>
+		<Animation>
+			<AnimationType>Target</AnimationType>
+			<AnimationOrientation>NONE</AnimationOrientation>
+			<AnimationFilename>action_target</AnimationFilename>
+		</Animation>		
+	</AnimationList>
+</AnimatedItem>

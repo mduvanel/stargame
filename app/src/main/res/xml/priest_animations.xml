@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AnimatedItem xmlns:android="http://schemas.android.com/apk/res/android" name="PriestAnimations_Name" android:id="@+id/priest_animations">
+	<AnimationsNb>8</AnimationsNb>
+	<AnimationList>
+		<Animation>
+			<AnimationType>Stand</AnimationType>
+			<AnimationOrientation>SOUTH</AnimationOrientation>
+			<AnimationFilename>priest_stand_south</AnimationFilename>
+		</Animation>
+		<Animation>
+			<AnimationType>Stand</AnimationType>
+			<AnimationOrientation>NORTH</AnimationOrientation>
+			<AnimationFilename>priest_stand_north</AnimationFilename>
+		</Animation>		
+		<Animation>
+			<AnimationType>Stand</AnimationType>
+			<AnimationOrientation>EAST</AnimationOrientation>
+			<AnimationFilename>priest_stand_east</AnimationFilename>
+		</Animation>		
+		<Animation>
+			<AnimationType>Stand</AnimationType>
+			<AnimationOrientation>WEST</AnimationOrientation>
+			<AnimationFilename>priest_stand_west</AnimationFilename>
+		</Animation>		
+		<Animation>
+			<AnimationType>Attack</AnimationType>
+			<AnimationOrientation>SOUTH</AnimationOrientation>
+			<AnimationFilename>priest_attack_south</AnimationFilename>
+		</Animation>
+		<Animation>
+			<AnimationType>Attack</AnimationType>
+			<AnimationOrientation>NORTH</AnimationOrientation>
+			<AnimationFilename>priest_attack_north</AnimationFilename>
+		</Animation>		
+		<Animation>
+			<AnimationType>Attack</AnimationType>
+			<AnimationOrientation>EAST</AnimationOrientation>
+			<AnimationFilename>priest_attack_east</AnimationFilename>
+		</Animation>		
+		<Animation>
+			<AnimationType>Attack</AnimationType>
+			<AnimationOrientation>WEST</AnimationOrientation>
+			<AnimationFilename>priest_attack_west</AnimationFilename>
+		</Animation>
+	</AnimationList>
+</AnimatedItem>

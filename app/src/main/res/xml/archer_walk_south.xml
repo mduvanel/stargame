@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Animation xmlns:android="http://schemas.android.com/apk/res/android" name="ArcherWalkSouthAnimation_Name" android:id="@+id/archer_walk_south">
+	<Bitmaps>1</Bitmaps>
+	<BitmapList>
+		<Bitmap>
+			<Index>1</Index>
+			<Name>cat_girl</Name>
+		</Bitmap>
+	</BitmapList>
+	<TotalFrames>5</TotalFrames>
+	<FrameList>
+		<Frame>
+			<BitmapIndex>1</BitmapIndex>
+			<OffsetX>-5</OffsetX>
+			<OffsetY>23</OffsetY>
+			<Duration>12</Duration>
+		</Frame>
+		<Frame>
+			<BitmapIndex>1</BitmapIndex>
+			<OffsetX>5</OffsetX>
+			<OffsetY>46</OffsetY>
+			<Duration>12</Duration>
+		</Frame>
+		<Frame>
+			<BitmapIndex>1</BitmapIndex>
+			<OffsetX>-5</OffsetX>
+			<OffsetY>69</OffsetY>
+			<Duration>12</Duration>
+		</Frame>
+		<Frame>
+			<BitmapIndex>1</BitmapIndex>
+			<OffsetX>5</OffsetX>
+			<OffsetY>92</OffsetY>
+			<Duration>12</Duration>
+		</Frame>
+		<Frame>
+			<BitmapIndex>1</BitmapIndex>
+			<OffsetX>0</OffsetX>
+			<OffsetY>114</OffsetY>
+			<Duration>12</Duration>
+		</Frame>
+	</FrameList>
+</Animation>

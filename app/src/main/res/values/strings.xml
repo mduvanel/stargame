@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Welcome to StarGame</string>
+    <string name="app_name">StarGame</string>
+    <string name="battle">Battle</string>
+    <string name="menu_start">Start Battle!</string>
+    <string name="menu_exit">Exit</string>
+    <string name="free_view">View</string>
+    <string name="actions">Action</string>
+    <string name="move_action">Move</string>
+    <string name="attack_action">Attack</string>
+    <string name="heal_action">Heal</string>
+    <string name="barrier_action">Barrier</string>
+    <string name="fireball_action">Fireball</string>
+    <string name="vanish_action">Vanish</string>
+    <string name="whirlwind_action">Whirlwind</string>
+    <string name="stun_action">Stun</string>
+    <string name="previous_action">Previous</string>
+    <string name="next_action">Next</string>
+    <string name="up">Up</string>
+    <string name="down">Down</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="end_turn">Finish</string>
+    <string name="missed">Missed</string>
+    <string name="critical">Critical</string>
+    <string name="status_barrier">Barrier</string>
+    <string name="status_bleed">Bleed</string>
+    <string name="status_fast">Fast</string>
+    <string name="status_immobile">Immobile</string>
+    <string name="status_invisible">Invisible</string>
+    <string name="status_poison">Poison</string>
+    <string name="status_silence">Silence</string>
+    <string name="status_slow">Slow</string>
+    <string name="incantation_fireball">Oh fire, son of the sun, unleash your power on the enemy! Fireball!</string>
+</resources>

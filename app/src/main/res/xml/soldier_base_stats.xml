@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Attributes xmlns:android="http://schemas.android.com/apk/res/android" name="SoldierBaseStats_Name" android:id="@+id/soldier_base_stats">
+	<HitPoints>20</HitPoints>
+	<ResourcePoints>10</ResourcePoints>
+	<Power>4</Power>
+	<MPower>1</MPower>
+	<Defense>2</Defense>
+	<MDefense>1</MDefense>
+	<Dodge>0</Dodge>
+	<MDodge>0</MDodge>
+	<Hit>0</Hit>
+	<MHit>0</MHit>
+	<Speed>0</Speed>
+	<Movement>0</Movement>
+	<HJump>1</HJump>
+	<VJump>0</VJump>
+</Attributes>

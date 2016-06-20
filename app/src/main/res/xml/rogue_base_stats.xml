@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Attributes xmlns:android="http://schemas.android.com/apk/res/android" name="RogueBaseStats_Name" android:id="@+id/rogue_base_stats">
+	<HitPoints>15</HitPoints>
+	<ResourcePoints>15</ResourcePoints>
+	<Power>4</Power>
+	<MPower>0</MPower>
+	<Defense>0</Defense>
+	<MDefense>1</MDefense>
+	<Dodge>3</Dodge>
+	<MDodge>1</MDodge>
+	<Hit>0</Hit>
+	<MHit>0</MHit>
+	<Speed>2</Speed>
+	<Movement>1</Movement>
+	<HJump>0</HJump>
+	<VJump>0</VJump>
+</Attributes>

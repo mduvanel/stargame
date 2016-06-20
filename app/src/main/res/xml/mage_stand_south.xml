@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Animation xmlns:android="http://schemas.android.com/apk/res/android" name="MageStandSouthAnimation_Name" android:id="@+id/mage_stand_south">
+	<Loop>true</Loop>
+	<Bitmaps>3</Bitmaps>
+	<BitmapList>
+		<Bitmap>
+			<Index>1</Index>
+			<Name>mage_south_center</Name>
+		</Bitmap>
+		<Bitmap>
+			<Index>2</Index>
+			<Name>mage_south_left</Name>
+		</Bitmap>
+		<Bitmap>
+			<Index>3</Index>
+			<Name>mage_south_right</Name>
+		</Bitmap>
+	</BitmapList>
+	<TotalFrames>4</TotalFrames>
+	<FrameList>
+		<Frame>
+			<BitmapIndex>1</BitmapIndex>
+			<OffsetX>0</OffsetX>
+			<OffsetY>0</OffsetY>
+			<Duration>6</Duration>
+		</Frame>
+		<Frame>
+			<BitmapIndex>2</BitmapIndex>
+			<OffsetX>0</OffsetX>
+			<OffsetY>0</OffsetY>
+			<Duration>6</Duration>
+		</Frame>
+		<Frame>
+			<BitmapIndex>1</BitmapIndex>
+			<OffsetX>0</OffsetX>
+			<OffsetY>0</OffsetY>
+			<Duration>6</Duration>
+		</Frame>
+		<Frame>
+			<BitmapIndex>3</BitmapIndex>
+			<OffsetX>0</OffsetX>
+			<OffsetY>0</OffsetY>
+			<Duration>6</Duration>
+		</Frame>
+	</FrameList>
+</Animation>

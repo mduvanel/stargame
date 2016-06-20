@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AnimatedItem xmlns:android="http://schemas.android.com/apk/res/android" name="ArcherAnimations_Name" android:id="@+id/archer_animations">
+	<AnimationsNb>2</AnimationsNb>
+	<AnimationList>
+		<Animation>
+			<AnimationType>Walk</AnimationType>
+			<AnimationOrientation>SOUTH</AnimationOrientation>
+			<AnimationFilename>archer_walk_south</AnimationFilename>
+		</Animation>
+		<Animation>
+			<AnimationType>Stand</AnimationType>
+			<AnimationOrientation>SOUTH</AnimationOrientation>
+			<AnimationFilename>archer_stand_south</AnimationFilename>
+		</Animation>
+	</AnimationList>
+</AnimatedItem>

@@ -8,6 +8,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
 
+import java.util.Locale;
+
 import stargame.android.controller.DPadController.DPadAction;
 import stargame.android.model.Battle;
 import stargame.android.storage.SavableHelper;
@@ -349,7 +351,6 @@ public class BattleActivity extends Activity implements IDPadPeeker
 		boolean bHandled = false;
 
 		final int iPointerCount = oEvent.getPointerCount();
-		String strMessage = "";
 
 		if ( Logger.isLogging() )
 		{
@@ -389,11 +390,10 @@ public class BattleActivity extends Activity implements IDPadPeeker
 					mCurrentZone = GetClickZone( mClickPosX, mClickPosY );
 					if ( Logger.isLogging() )
 					{
-						strMessage = String.format(
-								" initial pointer 0: (%f, %f)",
-								mClickPosX,
-								mClickPosY );
-						Logger.v( strMessage );
+						Logger.v( String.format(Locale.ENGLISH,
+                                  " initial pointer 0: (%f, %f)",
+                                  mClickPosX,
+								  mClickPosY ) );
 					}
 				}
 				else if ( iPointerIndex == 1 )
@@ -402,11 +402,10 @@ public class BattleActivity extends Activity implements IDPadPeeker
 					mClickPosYZoom = oEvent.getY( iPointerIndex );
 					if ( Logger.isLogging() )
 					{
-						strMessage = String.format(
-								" initial pointer 1: (%f, %f)",
-								mClickPosXZoom,
-								mClickPosYZoom );
-						Logger.v( strMessage );
+						Logger.v( String.format(Locale.ENGLISH,
+								  " initial pointer 1: (%f, %f)",
+								  mClickPosXZoom,
+								  mClickPosYZoom ) );
 					}
 				}
 			}
@@ -443,7 +442,7 @@ public class BattleActivity extends Activity implements IDPadPeeker
 
 			bHandled = true;
 
-			// Early exit if we just zoomed/unzoomed
+			// Early exit if we just zoomed in or out
 			if ( mClickPosX == -1 && mClickPosY == -1 )
 			{
 				mCurrentZone = DPadZone.NONE;
@@ -524,7 +523,7 @@ public class BattleActivity extends Activity implements IDPadPeeker
 				    		mCurrentZone = DPadZone.LEFT;
 						}
 					}
-					else // if ( Math.abs( fUpPosX - mClickPosX ) < ( Math.abs( fUpPosY - mClickPosY ) ) )
+					else
 					{
 						// Vertical movement
 						if ( fNewPosY > mClickPosY )

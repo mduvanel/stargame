@@ -27,6 +27,6 @@ public class ActivityValidation extends
 	public void testExit()
 	{
 		BattleActivity activity = getActivity();
-		Button exit = ( Button ) activity.findViewById( R.id.exit_button );
+		Button exit = ( Button ) activity.findViewById( stargame.android.R.id.exit_button );
 	}
 }

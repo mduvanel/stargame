@@ -5,5 +5,5 @@ import stargame.android.view.Battle2D;
 
 public interface IBattleAction2DCreator
 {
-	public BattleAction2D BattleAction2DCreate( BattleAction oAction, Battle2D oBattle );
+    public BattleAction2D BattleAction2DCreate( BattleAction oAction, Battle2D oBattle );
 }

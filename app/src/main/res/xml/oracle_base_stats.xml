@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Attributes xmlns:android="http://schemas.android.com/apk/res/android" name="OracleBaseStats_Name" android:id="@+id/oracle_base_stats">
-	<HitPoints>15</HitPoints>
-	<ResourcePoints>15</ResourcePoints>
-	<Power>2</Power>
-	<MPower>3</MPower>
-	<Defense>2</Defense>
-	<MDefense>3</MDefense>
-	<Dodge>1</Dodge>
-	<MDodge>2</MDodge>
-	<Hit>0</Hit>
-	<MHit>0</MHit>
-	<Speed>0</Speed>
-	<Movement>0</Movement>
-	<HJump>0</HJump>
-	<VJump>0</VJump>
+<Attributes xmlns:android="http://schemas.android.com/apk/res/android"
+    name="OracleBaseStats_Name"
+    android:id="@+id/oracle_base_stats">
+    <HitPoints>15</HitPoints>
+    <ResourcePoints>15</ResourcePoints>
+    <Power>2</Power>
+    <MPower>3</MPower>
+    <Defense>2</Defense>
+    <MDefense>3</MDefense>
+    <Dodge>1</Dodge>
+    <MDodge>2</MDodge>
+    <Hit>0</Hit>
+    <MHit>0</MHit>
+    <Speed>0</Speed>
+    <Movement>0</Movement>
+    <HJump>0</HJump>
+    <VJump>0</VJump>
 </Attributes>

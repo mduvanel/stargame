@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Animation xmlns:android="http://schemas.android.com/apk/res/android" name="StatusImmobileAnimation_Name" android:id="@+id/status_immobile">
-	<Bitmaps>0</Bitmaps>
-	<BitmapList/>
-	<TotalFrames>0</TotalFrames>
-	<FrameList/>
+<Animation xmlns:android="http://schemas.android.com/apk/res/android"
+    name="StatusImmobileAnimation_Name"
+    android:id="@+id/status_immobile">
+    <Bitmaps>0</Bitmaps>
+    <BitmapList />
+    <TotalFrames>0</TotalFrames>
+    <FrameList />
 </Animation>

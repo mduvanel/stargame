@@ -1,9 +1,9 @@
 package stargame.android.model.jobs.priest;
 
-import java.util.Vector;
-
 import android.content.res.Resources;
 import android.os.Bundle;
+
+import java.util.Vector;
 
 import stargame.android.model.Battle;
 import stargame.android.model.BattleAction;
@@ -17,69 +17,72 @@ import stargame.android.storage.SavableHelper;
 
 public class UnitJobPriest extends UnitJob
 {
-	private UnitJobPriest()
-	{
-		super();
-	}
+    private UnitJobPriest()
+    {
+        super();
+    }
 
-	public UnitJobPriest( Unit oUnit, Resources oResources )
-	{
-		super( oUnit );
+    public UnitJobPriest( Unit oUnit, Resources oResources )
+    {
+        super( oUnit );
 
-		mJobType = JobType.TYPE_PRIEST;
-		LoadAttributes( oResources );
-	}
+        mJobType = JobType.TYPE_PRIEST;
+        LoadAttributes( oResources );
+    }
 
-	@Override
-	public Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit )
-	{
-		Vector< BattleAction > vecActions = new Vector< BattleAction >();
-		vecActions.add( new BattleActionHeal( oBattle, oUnit ) );
-		vecActions.add( new BattleActionBarrier( oBattle, oUnit ) );
-		return vecActions;
-	}
+    @Override
+    public Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit )
+    {
+        Vector< BattleAction > vecActions = new Vector< BattleAction >();
+        vecActions.add( new BattleActionHeal( oBattle, oUnit ) );
+        vecActions.add( new BattleActionBarrier( oBattle, oUnit ) );
+        return vecActions;
+    }
 
-	public static IJobCreator GetCreator()
-	{
-		return new UnitJobPriestCreator();
-	}
+    public static IJobCreator GetCreator()
+    {
+        return new UnitJobPriestCreator();
+    }
 
-	public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
-	{
-		super.SaveUnitJobData( oObjectMap, oGlobalMap );
-	}
+    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    {
+        super.SaveUnitJobData( oObjectMap, oGlobalMap );
+    }
 
-	public static UnitJobPriest loadState( Bundle oGlobalMap, String strObjKey )
-	{
-		Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey, UnitJobPriest.class.getName() );
+    public static UnitJobPriest loadState( Bundle oGlobalMap, String strObjKey )
+    {
+        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
+                                                             UnitJobPriest.class.getName() );
 
-		if ( oObjectBundle == null )
-		{
-			return null;
-		}
+        if ( oObjectBundle == null )
+        {
+            return null;
+        }
 
-		UnitJobPriest oUnitJob = new UnitJobPriest();
+        UnitJobPriest oUnitJob = new UnitJobPriest();
 
-		oUnitJob.LoadUnitJobData( oObjectBundle, oGlobalMap );
+        oUnitJob.LoadUnitJobData( oObjectBundle, oGlobalMap );
 
-		return oUnitJob;
-	}
+        return oUnitJob;
+    }
 
-	public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
-	{
-		return loadState( oGlobalMap, strObjKey );
-	}
+    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    {
+        return loadState( oGlobalMap, strObjKey );
+    }
 
-	/** The job factory instance */
-	private static class UnitJobPriestCreator implements IJobCreator
-	{
-		public UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources )
-		{
-			if ( eType == JobType.TYPE_PRIEST )
-			{
-				return new UnitJobPriest( oUnit, oResources );
-			}
-			return null;
-		}	
-	}
+    /**
+     * The job factory instance
+     */
+    private static class UnitJobPriestCreator implements IJobCreator
+    {
+        public UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources )
+        {
+            if ( eType == JobType.TYPE_PRIEST )
+            {
+                return new UnitJobPriest( oUnit, oResources );
+            }
+            return null;
+        }
+    }
 }

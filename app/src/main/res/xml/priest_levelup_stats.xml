@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Attributes xmlns:android="http://schemas.android.com/apk/res/android" name="PriestLevelUpStats_Name" android:id="@+id/priest_levelup_stats">
-	<HitPoints>5</HitPoints>
-	<ResourcePoints>15</ResourcePoints>
-	<Power>0</Power>
-	<MPower>2</MPower>
-	<Defense>0</Defense>
-	<MDefense>2</MDefense>
-	<Dodge>0</Dodge>
-	<MDodge>0</MDodge>
-	<Hit>0</Hit>
-	<MHit>0</MHit>
-	<Speed>0</Speed>
-	<Movement>0</Movement>
-	<HJump>0</HJump>
-	<VJump>0</VJump>
+<Attributes xmlns:android="http://schemas.android.com/apk/res/android"
+    name="PriestLevelUpStats_Name"
+    android:id="@+id/priest_levelup_stats">
+    <HitPoints>5</HitPoints>
+    <ResourcePoints>15</ResourcePoints>
+    <Power>0</Power>
+    <MPower>2</MPower>
+    <Defense>0</Defense>
+    <MDefense>2</MDefense>
+    <Dodge>0</Dodge>
+    <MDodge>0</MDodge>
+    <Hit>0</Hit>
+    <MHit>0</MHit>
+    <Speed>0</Speed>
+    <Movement>0</Movement>
+    <HJump>0</HJump>
+    <VJump>0</VJump>
 </Attributes>

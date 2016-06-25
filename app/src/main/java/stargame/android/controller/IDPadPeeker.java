@@ -6,15 +6,17 @@ package stargame.android.controller;
  */
 public interface IDPadPeeker
 {
-	enum DPadZone
-	{
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT,
-		CENTER,
-		NONE
-	};
+    enum DPadZone
+    {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+        CENTER,
+        NONE
+    }
 
-	public DPadZone PeekZone();
+    ;
+
+    public DPadZone PeekZone();
 }

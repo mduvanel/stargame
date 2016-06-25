@@ -6,7 +6,7 @@ import android.graphics.RectF;
 
 public interface IDrawable
 {
-	public void doDraw( Canvas oCanvas, RectF oSourceRect, float fZoomFactor, Paint oPaint );
+    public void doDraw( Canvas oCanvas, RectF oSourceRect, float fZoomFactor, Paint oPaint );
 
-	public boolean isFinished();
+    public boolean isFinished();
 }

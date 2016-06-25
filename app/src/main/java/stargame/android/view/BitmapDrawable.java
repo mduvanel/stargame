@@ -7,20 +7,20 @@ import android.graphics.RectF;
 
 public class BitmapDrawable implements IDrawable
 {
-	private Bitmap mBitmap;
+    private Bitmap mBitmap;
 
-	public BitmapDrawable( Bitmap oBitmap )
-	{
-		mBitmap = oBitmap;
-	}
+    public BitmapDrawable( Bitmap oBitmap )
+    {
+        mBitmap = oBitmap;
+    }
 
-	public void doDraw( Canvas oCanvas, RectF oDestRect, float fZoomFactor, Paint oPaint )
-	{
-		oCanvas.drawBitmap( mBitmap, null, oDestRect, oPaint );
-	}
+    public void doDraw( Canvas oCanvas, RectF oDestRect, float fZoomFactor, Paint oPaint )
+    {
+        oCanvas.drawBitmap( mBitmap, null, oDestRect, oPaint );
+    }
 
-	public boolean isFinished()
-	{
-		return false;
-	}
+    public boolean isFinished()
+    {
+        return false;
+    }
 }

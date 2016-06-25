@@ -1,9 +1,9 @@
 package stargame.android.model.jobs.mage;
 
-import java.util.Vector;
-
 import android.content.res.Resources;
 import android.os.Bundle;
+
+import java.util.Vector;
 
 import stargame.android.model.Battle;
 import stargame.android.model.BattleAction;
@@ -17,68 +17,71 @@ import stargame.android.storage.SavableHelper;
 
 public class UnitJobMage extends UnitJob
 {
-	private UnitJobMage()
-	{
-		super();
-	}
+    private UnitJobMage()
+    {
+        super();
+    }
 
-	public UnitJobMage( Unit oUnit, Resources oResources )
-	{
-		super( oUnit );
-		
-		mJobType = JobType.TYPE_MAGE;
-		LoadAttributes( oResources );
-	}
+    public UnitJobMage( Unit oUnit, Resources oResources )
+    {
+        super( oUnit );
 
-	@Override
-	public Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit )
-	{
-		Vector< BattleAction > vecActions = new Vector< BattleAction >();
-		vecActions.add( new BattleActionFireball( oBattle, oUnit ) );
-		return vecActions;
-	}
+        mJobType = JobType.TYPE_MAGE;
+        LoadAttributes( oResources );
+    }
 
-	public static IJobCreator GetCreator()
-	{
-		return new UnitJobMageCreator();
-	}
+    @Override
+    public Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit )
+    {
+        Vector< BattleAction > vecActions = new Vector< BattleAction >();
+        vecActions.add( new BattleActionFireball( oBattle, oUnit ) );
+        return vecActions;
+    }
 
-	public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
-	{
-		super.SaveUnitJobData( oObjectMap, oGlobalMap );
-	}
+    public static IJobCreator GetCreator()
+    {
+        return new UnitJobMageCreator();
+    }
 
-	public static UnitJobMage loadState( Bundle oGlobalMap, String strObjKey )
-	{
-		Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey, UnitJobMage.class.getName() );
+    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    {
+        super.SaveUnitJobData( oObjectMap, oGlobalMap );
+    }
 
-		if ( oObjectBundle == null )
-		{
-			return null;
-		}
+    public static UnitJobMage loadState( Bundle oGlobalMap, String strObjKey )
+    {
+        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
+                                                             UnitJobMage.class.getName() );
 
-		UnitJobMage oUnitJob = new UnitJobMage();
+        if ( oObjectBundle == null )
+        {
+            return null;
+        }
 
-		oUnitJob.LoadUnitJobData( oObjectBundle, oGlobalMap );
+        UnitJobMage oUnitJob = new UnitJobMage();
 
-		return oUnitJob;
-	}
+        oUnitJob.LoadUnitJobData( oObjectBundle, oGlobalMap );
 
-	public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
-	{
-		return loadState( oGlobalMap, strObjKey );
-	}
+        return oUnitJob;
+    }
 
-	/** The job factory instance */
-	private static class UnitJobMageCreator implements IJobCreator
-	{
-		public UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources )
-		{
-			if ( eType == JobType.TYPE_MAGE )
-			{
-				return new UnitJobMage( oUnit, oResources );
-			}
-			return null;
-		}	
-	}
+    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    {
+        return loadState( oGlobalMap, strObjKey );
+    }
+
+    /**
+     * The job factory instance
+     */
+    private static class UnitJobMageCreator implements IJobCreator
+    {
+        public UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources )
+        {
+            if ( eType == JobType.TYPE_MAGE )
+            {
+                return new UnitJobMage( oUnit, oResources );
+            }
+            return null;
+        }
+    }
 }

@@ -1,112 +1,114 @@
 <?xml version="1.0"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="BattleField">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element type="xs:unsignedByte" name="LineCount"/>
-        <xs:element name="Lines">
-          <xs:complexType>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="BattleField">
+        <xs:complexType>
             <xs:sequence>
-              <xs:element name="Line">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element type="xs:unsignedByte" name="LineIndex"/>
-                    <xs:element type="Case" name="Case" maxOccurs="unbounded" minOccurs="0"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
+                <xs:element type="xs:unsignedByte" name="LineCount" />
+                <xs:element name="Lines">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Line">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:unsignedByte" name="LineIndex" />
+                                        <xs:element type="Case" name="Case" maxOccurs="unbounded"
+                                            minOccurs="0" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
             </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-      <xs:attribute type="xs:string" name="name"/>
-    </xs:complexType>
-  </xs:element>
-  
-  <xs:complexType name="Case">
-    <xs:sequence>
-      <xs:element type="xs:unsignedByte" name="RowIndex"/>
-      <xs:element type="CaseType" name="Type"/>
-      <xs:element type="xs:unsignedByte" name="Height"/>
-      <xs:element name="Graphics">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="Top">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element type="Tile" name="TileUL"/>
-                  <xs:element type="Tile" name="TileUR"/>
-                  <xs:element type="Tile" name="TileLL"/>
-                  <xs:element type="Tile" name="TileLR"/>
-                </xs:sequence>
-              </xs:complexType>
+            <xs:attribute type="xs:string" name="name" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Case">
+        <xs:sequence>
+            <xs:element type="xs:unsignedByte" name="RowIndex" />
+            <xs:element type="CaseType" name="Type" />
+            <xs:element type="xs:unsignedByte" name="Height" />
+            <xs:element name="Graphics">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Top">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element type="Tile" name="TileUL" />
+                                    <xs:element type="Tile" name="TileUR" />
+                                    <xs:element type="Tile" name="TileLL" />
+                                    <xs:element type="Tile" name="TileLR" />
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element type="TileSide" name="NorthSide" />
+                        <xs:element type="TileSide" name="EastSide" />
+                        <xs:element type="TileSide" name="SouthSide" />
+                        <xs:element type="TileSide" name="WestSide" />
+                    </xs:sequence>
+                </xs:complexType>
             </xs:element>
-            <xs:element type="TileSide" name="NorthSide"/>
-            <xs:element type="TileSide" name="EastSide"/>
-            <xs:element type="TileSide" name="SouthSide"/>
-            <xs:element type="TileSide" name="WestSide"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
+        </xs:sequence>
+    </xs:complexType>
 
-  <xs:complexType name="TileSide"> <!-- mixed="true" -->
-    <xs:sequence>
-      <xs:element type="xs:unsignedByte" name="Height" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="Tile" minOccurs="0" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element type="xs:unsignedByte" name="TileIndex"/>
-            <xs:element type="VerticalTile" name="TileL"/>
-            <xs:element type="VerticalTile" name="TileR"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
+    <xs:complexType name="TileSide"> <!-- mixed="true" -->
+        <xs:sequence>
+            <xs:element type="xs:unsignedByte" name="Height" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Tile" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element type="xs:unsignedByte" name="TileIndex" />
+                        <xs:element type="VerticalTile" name="TileL" />
+                        <xs:element type="VerticalTile" name="TileR" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
-  <xs:complexType name="Tile">
-    <xs:sequence>
-      <xs:element type="TileType" name="Type"/>
-      <xs:element type="xs:string" name="Tileset"/>
-    </xs:sequence>
-  </xs:complexType>
+    <xs:complexType name="Tile">
+        <xs:sequence>
+            <xs:element type="TileType" name="Type" />
+            <xs:element type="xs:string" name="Tileset" />
+        </xs:sequence>
+    </xs:complexType>
 
-  <xs:complexType name="VerticalTile">
-    <xs:sequence>
-      <xs:element type="VerticalTileType" name="Type"/>
-      <xs:element type="xs:string" name="Tileset"/>
-    </xs:sequence>
-  </xs:complexType>
-                    
-  <xs:simpleType name="CaseType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="LAVA"/>
-      <xs:enumeration value="GRASS" />
-      <xs:enumeration value="ROCK" />
-      <xs:enumeration value="WATER" />
-      <xs:enumeration value="FOREST" />
-      <xs:enumeration value="PLAIN" />
-    </xs:restriction>
-  </xs:simpleType>
-  
-  <xs:simpleType name="TileType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="angle"/>
-      <xs:enumeration value="corner" />
-      <xs:enumeration value="hlimit" />
-      <xs:enumeration value="vlimit" />
-      <xs:enumeration value="plain" />
-    </xs:restriction>
-  </xs:simpleType>
-  
-  <xs:simpleType name="VerticalTileType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="top_limit"/>
-      <xs:enumeration value="top_plain" />
-      <xs:enumeration value="bottom_limit" />
-      <xs:enumeration value="bottom_plain" />
-    </xs:restriction>
-  </xs:simpleType>
+    <xs:complexType name="VerticalTile">
+        <xs:sequence>
+            <xs:element type="VerticalTileType" name="Type" />
+            <xs:element type="xs:string" name="Tileset" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="CaseType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LAVA" />
+            <xs:enumeration value="GRASS" />
+            <xs:enumeration value="ROCK" />
+            <xs:enumeration value="WATER" />
+            <xs:enumeration value="FOREST" />
+            <xs:enumeration value="PLAIN" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="TileType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="angle" />
+            <xs:enumeration value="corner" />
+            <xs:enumeration value="hlimit" />
+            <xs:enumeration value="vlimit" />
+            <xs:enumeration value="plain" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VerticalTileType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="top_limit" />
+            <xs:enumeration value="top_plain" />
+            <xs:enumeration value="bottom_limit" />
+            <xs:enumeration value="bottom_plain" />
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

@@ -8,23 +8,23 @@ import android.widget.Button;
 
 public class StarView extends View
 {
-	Button mStart;
+    Button mStart;
 
-	Button mExit;
+    Button mExit;
 
-	public StarView( Context oContext )
-	{
-		super( oContext );
+    public StarView( Context oContext )
+    {
+        super( oContext );
 
         setFocusable( true ); // make sure we get key events
-	}
+    }
 
-	public StarView( Context oContext, AttributeSet oAttrSet )
-	{
-		super( oContext, oAttrSet );
+    public StarView( Context oContext, AttributeSet oAttrSet )
+    {
+        super( oContext, oAttrSet );
 
-		setFocusable( true ); // make sure we get key events
-	}
+        setFocusable( true ); // make sure we get key events
+    }
 
     /**
      * Standard override to get key-press events.

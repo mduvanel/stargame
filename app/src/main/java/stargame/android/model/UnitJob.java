@@ -1,112 +1,121 @@
 package stargame.android.model;
 
-import java.util.Vector;
-
 import android.content.res.Resources;
 import android.os.Bundle;
+
+import java.util.Vector;
 
 import stargame.android.model.jobs.JobType;
 import stargame.android.storage.ISavable;
 import stargame.android.storage.SavableHelper;
 
 /**
- *  Class representing a unit with a job.
+ * Class representing a unit with a job.
+ *
  * @author Duduche
  */
 public abstract class UnitJob implements ISavable
 {
-	/** The unit that has this job instance */
-	protected Unit mUnit;
+    /**
+     * The unit that has this job instance
+     */
+    protected Unit mUnit;
 
-	private static final String M_UNIT = "Unit";
+    private static final String M_UNIT = "Unit";
 
-	/** The type of job */
-	protected JobType mJobType;
+    /**
+     * The type of job
+     */
+    protected JobType mJobType;
 
-	private static final String M_JOB_TYPE = "JobType";
-	
-	/** The passive increase in stats (just for having the job) */
-	protected Attributes mAttributes;
+    private static final String M_JOB_TYPE = "JobType";
 
-	private static final String M_ATTRIBS = "Attributes";
+    /**
+     * The passive increase in stats (just for having the job)
+     */
+    protected Attributes mAttributes;
 
-	/** 
-	 * The bonuses linked to the level-up (actual increase in stats 
-	 * at level-up, when levelling up in a specific job)
-	 */
-	protected Attributes mLevelUpAttributes;
+    private static final String M_ATTRIBS = "Attributes";
 
-	private static final String M_LU_ATTRIBS = "LUAttributes";
+    /**
+     * The bonuses linked to the level-up (actual increase in stats
+     * at level-up, when levelling up in a specific job)
+     */
+    protected Attributes mLevelUpAttributes;
 
-	protected UnitJob() {}
+    private static final String M_LU_ATTRIBS = "LUAttributes";
 
-	protected UnitJob( Unit unit )
-	{
-		mUnit = unit;
-		mAttributes = new Attributes();
-		mLevelUpAttributes = new Attributes();
-	}
+    protected UnitJob()
+    {
+    }
 
-	public JobType GetJobType()
-	{
-		return mJobType;
-	}
+    protected UnitJob( Unit unit )
+    {
+        mUnit = unit;
+        mAttributes = new Attributes();
+        mLevelUpAttributes = new Attributes();
+    }
 
-	public void LoadAttributes( Resources oResources )
-	{
-		mAttributes.LoadFromResources( oResources, mJobType.toString() + "_base_stats" );
-		mLevelUpAttributes.LoadFromResources( oResources, mJobType.toString() + "_levelup_stats" );
-	}
+    public JobType GetJobType()
+    {
+        return mJobType;
+    }
 
-	public Attributes GetAttributes()
-	{
-		return mAttributes;
-	}
+    public void LoadAttributes( Resources oResources )
+    {
+        mAttributes.LoadFromResources( oResources, mJobType.toString() + "_base_stats" );
+        mLevelUpAttributes.LoadFromResources( oResources, mJobType.toString() + "_levelup_stats" );
+    }
 
-	void LevelUp()
-	{
-		mUnit.mAttributes.AddAttributes( mLevelUpAttributes );
-		mUnit.mLevel += 1;
-	}
+    public Attributes GetAttributes()
+    {
+        return mAttributes;
+    }
 
-	void AddXP( int iXPAmount )
-	{
-		mUnit.mExperience += iXPAmount;
+    void LevelUp()
+    {
+        mUnit.mAttributes.AddAttributes( mLevelUpAttributes );
+        mUnit.mLevel += 1;
+    }
 
-		if ( mUnit.mExperience >= 100 )
-		{
-			LevelUp();
-			mUnit.mExperience -= 100;
-		}
-	}
+    void AddXP( int iXPAmount )
+    {
+        mUnit.mExperience += iXPAmount;
 
-	protected void SaveUnitJobData( Bundle oObjectMap, Bundle oGlobalMap )
-	{
-		oObjectMap.putInt( M_JOB_TYPE, mJobType.ordinal() );
+        if ( mUnit.mExperience >= 100 )
+        {
+            LevelUp();
+            mUnit.mExperience -= 100;
+        }
+    }
 
-		String strObjKey = SavableHelper.saveInMap( mUnit, oGlobalMap );
-		oObjectMap.putString( M_UNIT, strObjKey );
+    protected void SaveUnitJobData( Bundle oObjectMap, Bundle oGlobalMap )
+    {
+        oObjectMap.putInt( M_JOB_TYPE, mJobType.ordinal() );
 
-		strObjKey = SavableHelper.saveInMap( mAttributes, oGlobalMap );
-		oObjectMap.putString( M_ATTRIBS, strObjKey );
+        String strObjKey = SavableHelper.saveInMap( mUnit, oGlobalMap );
+        oObjectMap.putString( M_UNIT, strObjKey );
 
-		strObjKey = SavableHelper.saveInMap( mLevelUpAttributes, oGlobalMap );
-		oObjectMap.putString( M_LU_ATTRIBS, strObjKey );
-	}
+        strObjKey = SavableHelper.saveInMap( mAttributes, oGlobalMap );
+        oObjectMap.putString( M_ATTRIBS, strObjKey );
 
-	protected void LoadUnitJobData( Bundle oObjectMap, Bundle oGlobalMap )
-	{
-		mJobType = JobType.values()[ oObjectMap.getInt( M_JOB_TYPE ) ];
+        strObjKey = SavableHelper.saveInMap( mLevelUpAttributes, oGlobalMap );
+        oObjectMap.putString( M_LU_ATTRIBS, strObjKey );
+    }
 
-		String strKey = oObjectMap.getString( M_UNIT );
-		mUnit = Unit.loadState( oGlobalMap, strKey );
+    protected void LoadUnitJobData( Bundle oObjectMap, Bundle oGlobalMap )
+    {
+        mJobType = JobType.values()[ oObjectMap.getInt( M_JOB_TYPE ) ];
 
-		strKey = oObjectMap.getString( M_ATTRIBS );
-		mAttributes = Attributes.loadState( oGlobalMap, strKey );
+        String strKey = oObjectMap.getString( M_UNIT );
+        mUnit = Unit.loadState( oGlobalMap, strKey );
 
-		strKey = oObjectMap.getString( M_LU_ATTRIBS );
-		mLevelUpAttributes = Attributes.loadState( oGlobalMap, strKey );
-	}
+        strKey = oObjectMap.getString( M_ATTRIBS );
+        mAttributes = Attributes.loadState( oGlobalMap, strKey );
 
-	public abstract Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit );
+        strKey = oObjectMap.getString( M_LU_ATTRIBS );
+        mLevelUpAttributes = Attributes.loadState( oGlobalMap, strKey );
+    }
+
+    public abstract Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit );
 }

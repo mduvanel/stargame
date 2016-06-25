@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Attributes xmlns:android="http://schemas.android.com/apk/res/android" name="OracleLevelUpStats_Name" android:id="@+id/oracle_levelup_stats">
-	<HitPoints>10</HitPoints>
-	<ResourcePoints>10</ResourcePoints>
-	<Power>1</Power>
-	<MPower>1</MPower>
-	<Defense>1</Defense>
-	<MDefense>1</MDefense>
-	<Dodge>0</Dodge>
-	<MDodge>0</MDodge>
-	<Hit>0</Hit>
-	<MHit>0</MHit>
-	<Speed>0</Speed>
-	<Movement>0</Movement>
-	<HJump>0</HJump>
-	<VJump>0</VJump>
+<Attributes xmlns:android="http://schemas.android.com/apk/res/android"
+    name="OracleLevelUpStats_Name"
+    android:id="@+id/oracle_levelup_stats">
+    <HitPoints>10</HitPoints>
+    <ResourcePoints>10</ResourcePoints>
+    <Power>1</Power>
+    <MPower>1</MPower>
+    <Defense>1</Defense>
+    <MDefense>1</MDefense>
+    <Dodge>0</Dodge>
+    <MDodge>0</MDodge>
+    <Hit>0</Hit>
+    <MHit>0</MHit>
+    <Speed>0</Speed>
+    <Movement>0</Movement>
+    <HJump>0</HJump>
+    <VJump>0</VJump>
 </Attributes>

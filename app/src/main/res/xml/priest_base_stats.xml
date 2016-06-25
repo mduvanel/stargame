@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Attributes xmlns:android="http://schemas.android.com/apk/res/android" name="PriestBaseStats_Name" android:id="@+id/priest_base_stats">
-	<HitPoints>5</HitPoints>
-	<ResourcePoints>25</ResourcePoints>
-	<Power>0</Power>
-	<MPower>5</MPower>
-	<Defense>0</Defense>
-	<MDefense>5</MDefense>
-	<Dodge>0</Dodge>
-	<MDodge>3</MDodge>
-	<Hit>0</Hit>
-	<MHit>0</MHit>
-	<Speed>0</Speed>
-	<Movement>0</Movement>
-	<HJump>0</HJump>
-	<VJump>0</VJump>
+<Attributes xmlns:android="http://schemas.android.com/apk/res/android"
+    name="PriestBaseStats_Name"
+    android:id="@+id/priest_base_stats">
+    <HitPoints>5</HitPoints>
+    <ResourcePoints>25</ResourcePoints>
+    <Power>0</Power>
+    <MPower>5</MPower>
+    <Defense>0</Defense>
+    <MDefense>5</MDefense>
+    <Dodge>0</Dodge>
+    <MDodge>3</MDodge>
+    <Hit>0</Hit>
+    <MHit>0</MHit>
+    <Speed>0</Speed>
+    <Movement>0</Movement>
+    <HJump>0</HJump>
+    <VJump>0</VJump>
 </Attributes>

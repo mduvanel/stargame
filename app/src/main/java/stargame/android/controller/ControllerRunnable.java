@@ -1,9 +1,9 @@
 package stargame.android.controller;
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 import stargame.android.controller.DPadController.DPadAction;
 import stargame.android.util.Logger;

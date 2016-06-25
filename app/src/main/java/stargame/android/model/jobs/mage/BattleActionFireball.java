@@ -1,6 +1,7 @@
 package stargame.android.model.jobs.mage;
 
 import android.os.Bundle;
+
 import stargame.android.R;
 import stargame.android.model.Battle;
 import stargame.android.model.BattleCell;
@@ -15,134 +16,139 @@ import stargame.android.util.RandomGenerator;
 
 /**
  * Class BattleActionFireball implements the Fireball action for mages
- * 
+ *
  * @author Duduche
  */
 public class BattleActionFireball extends RangeBattleAction implements ISavable
 {
-	private int mDamage;
+    private int mDamage;
 
-	private static final String M_DAMAGE = "Damage";
+    private static final String M_DAMAGE = "Damage";
 
-	public int GetDamage()
-	{
-		return mDamage;
-	}
+    public int GetDamage()
+    {
+        return mDamage;
+    }
 
-	private BattleActionFireball()
-	{
-		super();
-		mDamage = -1;
-	}
+    private BattleActionFireball()
+    {
+        super();
+        mDamage = -1;
+    }
 
-	public BattleActionFireball( Battle oBattle, BattleUnit oUnit )
-	{
-		super( oBattle, oUnit );
-		mActionType = R.string.fireball_action;
-		mDamage = 0;
+    public BattleActionFireball( Battle oBattle, BattleUnit oUnit )
+    {
+        super( oBattle, oUnit );
+        mActionType = R.string.fireball_action;
+        mDamage = 0;
 
-		InitValidArray();
-	}
+        InitValidArray();
+    }
 
-	@Override
-	public boolean SetTarget( BattleCell oCell )
-	{
-		if ( IsValidTarget( oCell.GetPos() ) && 
-			 oCell.GetUnit() != null && 
-			 oCell.GetUnit().IsTargetable() ) // invisible units can't be attacked
-		{
-			mVecTargets.set( 0, new ActionTarget( oCell ) );
-			return true;
-		}
+    @Override
+    public boolean SetTarget( BattleCell oCell )
+    {
+        if ( IsValidTarget( oCell.GetPos() ) &&
+                oCell.GetUnit() != null &&
+                oCell.GetUnit().IsTargetable() ) // invisible units can't be attacked
+        {
+            mVecTargets.set( 0, new ActionTarget( oCell ) );
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public boolean CanExecuteAction()
-	{
-		return ( mVecTargets.get( 0 ) != null );
-	}
+    public boolean CanExecuteAction()
+    {
+        return ( mVecTargets.get( 0 ) != null );
+    }
 
-	@Override
-	public void ExecuteAction()
-	{
-		// Get the target
-		ActionTarget oTarget = mVecTargets.get( 0 );
+    @Override
+    public void ExecuteAction()
+    {
+        // Get the target
+        ActionTarget oTarget = mVecTargets.get( 0 );
 
-		// Check if attack lands: compute chance of hitting the target
-		if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <= mSourceUnit.GetMagicHitChance( oTarget.mCell.GetUnit() ) )
-		{
-			// Get fireball damage amount
-			double dFinalDamage = Math.max( 1, mSourceUnit.GetUnit().GetResultingAttributes().GetMagicPower() - 
-					oTarget.mCell.GetUnit().GetUnit().GetResultingAttributes().GetMagicDef() );
+        // Check if attack lands: compute chance of hitting the target
+        if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <= mSourceUnit.GetMagicHitChance(
+                oTarget.mCell.GetUnit() ) )
+        {
+            // Get fireball damage amount
+            double dFinalDamage = Math.max( 1,
+                                            mSourceUnit.GetUnit().GetResultingAttributes().GetMagicPower() -
+                                                    oTarget.mCell.GetUnit().GetUnit().GetResultingAttributes().GetMagicDef() );
 
-			// Check for critical damage
-			if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <= mCritChance )
-			{
-				dFinalDamage *= 1.5;
-				oTarget.mActionStatus = ActionStatus.STATUS_CRITICAL;
-			}
-			else
-			{
-				oTarget.mActionStatus = ActionStatus.STATUS_SUCCESS;
-			}
+            // Check for critical damage
+            if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <= mCritChance )
+            {
+                dFinalDamage *= 1.5;
+                oTarget.mActionStatus = ActionStatus.STATUS_CRITICAL;
+            }
+            else
+            {
+                oTarget.mActionStatus = ActionStatus.STATUS_SUCCESS;
+            }
 
-			// Add random portion to damage (10% of base damage)
-			dFinalDamage = RandomGenerator.GetInstance().GetRandom( dFinalDamage - ( dFinalDamage / 10.0 ), dFinalDamage + ( dFinalDamage / 10.0 ) );
+            // Add random portion to damage (10% of base damage)
+            dFinalDamage = RandomGenerator.GetInstance().GetRandom(
+                    dFinalDamage - ( dFinalDamage / 10.0 ),
+                    dFinalDamage + ( dFinalDamage / 10.0 ) );
 
-			mDamage = oTarget.mCell.GetUnit().ApplyDamage( dFinalDamage );
-		}
-		else
-		{
-			mDamage = 0;
-			oTarget.mActionStatus = ActionStatus.STATUS_MISS;
-		}
+            mDamage = oTarget.mCell.GetUnit().ApplyDamage( dFinalDamage );
+        }
+        else
+        {
+            mDamage = 0;
+            oTarget.mActionStatus = ActionStatus.STATUS_MISS;
+        }
 
-		BattleDialog oDialog = new BattleDialog();
-		oDialog.AddDialog( R.string.incantation_fireball, mSourceUnit );
-		try
-		{
-			mBattle.SetCurrentDialog( oDialog );
-		}
-		catch ( Exception e )
-		{
-			Logger.e( "Attempt to set new dialog while another one is still running!" );
-		}
+        BattleDialog oDialog = new BattleDialog();
+        oDialog.AddDialog( R.string.incantation_fireball, mSourceUnit );
+        try
+        {
+            mBattle.SetCurrentDialog( oDialog );
+        }
+        catch ( Exception e )
+        {
+            Logger.e( "Attempt to set new dialog while another one is still running!" );
+        }
 
-		NotifyActionUpdate();
-		ResetValidArray();
-		mSourceUnit.SetActionPerformed();
-	}
+        NotifyActionUpdate();
+        ResetValidArray();
+        mSourceUnit.SetActionPerformed();
+    }
 
-	public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
-	{
-		// Save parent info
-		super.SaveBattleActionState( oObjectMap, oGlobalMap );
+    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    {
+        // Save parent info
+        super.SaveBattleActionState( oObjectMap, oGlobalMap );
 
-		oObjectMap.putInt( M_DAMAGE, mDamage );
-	}
+        oObjectMap.putInt( M_DAMAGE, mDamage );
+    }
 
-	public static BattleActionFireball loadState( Bundle oGlobalMap, String strObjKey )
-	{
-		Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey, BattleActionFireball.class.getName() );
+    public static BattleActionFireball loadState( Bundle oGlobalMap, String strObjKey )
+    {
+        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
+                                                             BattleActionFireball.class.getName() );
 
-		if ( oObjectBundle == null )
-		{
-			return null;
-		}
+        if ( oObjectBundle == null )
+        {
+            return null;
+        }
 
-		BattleActionFireball oAction = new BattleActionFireball();
+        BattleActionFireball oAction = new BattleActionFireball();
 
-		// Load parent info
-		oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
+        // Load parent info
+        oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
 
-		oAction.mDamage = oObjectBundle.getInt( M_DAMAGE );
+        oAction.mDamage = oObjectBundle.getInt( M_DAMAGE );
 
-		return oAction;
-	}
+        return oAction;
+    }
 
-	public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
-	{
-		return loadState( oGlobalMap, strObjKey );
-	}
+    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    {
+        return loadState( oGlobalMap, strObjKey );
+    }
 }

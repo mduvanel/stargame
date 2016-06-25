@@ -5,36 +5,36 @@ import java.util.List;
 
 public class TreeNode< E >
 {
-	protected List< TreeNode< E > > mSubtree;
-	
-	protected E mLeaf;
+    protected List< TreeNode< E > > mSubtree;
 
-	public TreeNode()
-	{
-		mLeaf = null;
-		mSubtree = null;
-	}
+    protected E mLeaf;
 
-	public TreeNode( E oValue )
-	{
-		mLeaf = oValue;
-		mSubtree = null;
-	}
+    public TreeNode()
+    {
+        mLeaf = null;
+        mSubtree = null;
+    }
 
-	public List< TreeNode< E > > GetChildren()
-	{
+    public TreeNode( E oValue )
+    {
+        mLeaf = oValue;
+        mSubtree = null;
+    }
+
+    public List< TreeNode< E > > GetChildren()
+    {
         if ( mSubtree == null )
         {
             return new ArrayList< TreeNode< E > >();
         }
-		return mSubtree;
-	}
+        return mSubtree;
+    }
 
-	public void AddChild( TreeNode< E > oChild )
-	{
+    public void AddChild( TreeNode< E > oChild )
+    {
         if ( mSubtree == null )
         {
-        	mSubtree = new ArrayList< TreeNode< E > >();
+            mSubtree = new ArrayList< TreeNode< E > >();
         }
         mSubtree.add( oChild );
     }
@@ -51,18 +51,18 @@ public class TreeNode< E >
 
     public int GetNbElements()
     {
-    	if ( mLeaf != null )
-    	{
-    		return 1;
-    	}
-    	else
-    	{
-    		int iSize = 0;
-    		for ( TreeNode< E > oElement : mSubtree )
-    		{
-    			iSize += oElement.GetNbElements();
-    		}
-    		return iSize;
-    	}
+        if ( mLeaf != null )
+        {
+            return 1;
+        }
+        else
+        {
+            int iSize = 0;
+            for ( TreeNode< E > oElement : mSubtree )
+            {
+                iSize += oElement.GetNbElements();
+            }
+            return iSize;
+        }
     }
 }

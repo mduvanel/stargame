@@ -1,9 +1,9 @@
 package stargame.android.model;
 
+import android.os.Bundle;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import android.os.Bundle;
 
 import stargame.android.model.jobs.JobType;
 import stargame.android.storage.ISavable;
@@ -12,14 +12,14 @@ import stargame.android.storage.SavableHelper;
 
 enum EquipmentType
 {
-	TYPE_ARMOR_HEAD,
-	TYPE_ARMOR_NECK,
-	TYPE_ARMOR_BODY,
-	TYPE_ARMOR_LEGS,
-	TYPE_ARMOR_ARM,
-	TYPE_WEAPON_1HAND,
-	TYPE_WEAPON_2HAND,
-	TYPE_WEAPON_SHIELD
+    TYPE_ARMOR_HEAD,
+    TYPE_ARMOR_NECK,
+    TYPE_ARMOR_BODY,
+    TYPE_ARMOR_LEGS,
+    TYPE_ARMOR_ARM,
+    TYPE_WEAPON_1HAND,
+    TYPE_WEAPON_2HAND,
+    TYPE_WEAPON_SHIELD
 }
 
 /**
@@ -27,97 +27,106 @@ enum EquipmentType
  */
 public class Equipment implements ISavable
 {
-	/** List of Jobs that can wear the equipment piece */
-	protected Set< JobType > mSetCompatibleJobs;
+    /**
+     * List of Jobs that can wear the equipment piece
+     */
+    protected Set< JobType > mSetCompatibleJobs;
 
-	private static final String M_JOBS = "Jobs";
+    private static final String M_JOBS = "Jobs";
 
-	/** Name of the equipment piece */
-	protected String mEquipmentName;
+    /**
+     * Name of the equipment piece
+     */
+    protected String mEquipmentName;
 
-	private static final String M_NAME = "Name";
+    private static final String M_NAME = "Name";
 
-	/** Type for this equipment */
-	protected EquipmentType mType;
+    /**
+     * Type for this equipment
+     */
+    protected EquipmentType mType;
 
-	private static final String M_TYPE = "Type";
+    private static final String M_TYPE = "Type";
 
-	/** The passive increase in stats (just for wearing the armor) */
-	protected Attributes mAttributes;
+    /**
+     * The passive increase in stats (just for wearing the armor)
+     */
+    protected Attributes mAttributes;
 
-	private static final String M_ATTRIBS = "Attribs";
+    private static final String M_ATTRIBS = "Attribs";
 
-	public Equipment()
-	{
-		mSetCompatibleJobs = new HashSet< JobType >();
-		mAttributes = new Attributes();
-	}
-	
-	public void Load()
-	{
-		// TODO: load an armor from XML
-	}
-	
-	public EquipmentType GetArmorType()
-	{
-		return mType;
-	}
-	
-	public String GetEquipmentName()
-	{
-		return mEquipmentName;
-	}
+    public Equipment()
+    {
+        mSetCompatibleJobs = new HashSet< JobType >();
+        mAttributes = new Attributes();
+    }
 
-	public Attributes GetAttributes()
-	{
-		return mAttributes;
-	}
+    public void Load()
+    {
+        // TODO: load an armor from XML
+    }
 
-	public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
-	{
-		int[] aJobs = new int[ mSetCompatibleJobs.size() ];
-		int iCount = 0;
-		for ( JobType eType : mSetCompatibleJobs )
-		{
-			aJobs[ iCount++ ] = eType.ordinal();
-		}
-		oObjectMap.putIntArray( M_JOBS, aJobs );
-		oObjectMap.putString( M_NAME, mEquipmentName );
-		oObjectMap.putInt( M_TYPE, mType.ordinal() );
+    public EquipmentType GetArmorType()
+    {
+        return mType;
+    }
 
-		String strObjKey = SavableHelper.saveInMap( mAttributes, oGlobalMap );
-		oObjectMap.putString( M_ATTRIBS, strObjKey );
-	}
+    public String GetEquipmentName()
+    {
+        return mEquipmentName;
+    }
 
-	public static Equipment loadState( Bundle oGlobalMap, String strObjKey )
-	{
-		Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey, Equipment.class.getName() );
+    public Attributes GetAttributes()
+    {
+        return mAttributes;
+    }
 
-		if ( oObjectBundle == null )
-		{
-			return null;
-		}
+    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    {
+        int[] aJobs = new int[ mSetCompatibleJobs.size() ];
+        int iCount = 0;
+        for ( JobType eType : mSetCompatibleJobs )
+        {
+            aJobs[ iCount++ ] = eType.ordinal();
+        }
+        oObjectMap.putIntArray( M_JOBS, aJobs );
+        oObjectMap.putString( M_NAME, mEquipmentName );
+        oObjectMap.putInt( M_TYPE, mType.ordinal() );
 
-		Equipment oEquip = new Equipment();
+        String strObjKey = SavableHelper.saveInMap( mAttributes, oGlobalMap );
+        oObjectMap.putString( M_ATTRIBS, strObjKey );
+    }
 
-		oEquip.mEquipmentName = oObjectBundle.getString( M_NAME );
-		oEquip.mType = EquipmentType.values()[ oObjectBundle.getInt( M_TYPE ) ];
+    public static Equipment loadState( Bundle oGlobalMap, String strObjKey )
+    {
+        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
+                                                             Equipment.class.getName() );
 
-		String strKey = oObjectBundle.getString( M_ATTRIBS );
-		oEquip.mAttributes = Attributes.loadState( oGlobalMap, strKey );
+        if ( oObjectBundle == null )
+        {
+            return null;
+        }
 
-		int[] aJobs = oObjectBundle.getIntArray( M_JOBS );
-		oEquip.mSetCompatibleJobs.clear();
-		for ( int i = 0; i < aJobs.length; ++i )
-		{
-			oEquip.mSetCompatibleJobs.add( JobType.values()[ aJobs[ i ] ] );
-		}
+        Equipment oEquip = new Equipment();
 
-		return oEquip;
-	}
+        oEquip.mEquipmentName = oObjectBundle.getString( M_NAME );
+        oEquip.mType = EquipmentType.values()[ oObjectBundle.getInt( M_TYPE ) ];
 
-	public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
-	{
-		return loadState( oGlobalMap, strObjKey );
-	}
+        String strKey = oObjectBundle.getString( M_ATTRIBS );
+        oEquip.mAttributes = Attributes.loadState( oGlobalMap, strKey );
+
+        int[] aJobs = oObjectBundle.getIntArray( M_JOBS );
+        oEquip.mSetCompatibleJobs.clear();
+        for ( int i = 0; i < aJobs.length; ++i )
+        {
+            oEquip.mSetCompatibleJobs.add( JobType.values()[ aJobs[ i ] ] );
+        }
+
+        return oEquip;
+    }
+
+    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    {
+        return loadState( oGlobalMap, strObjKey );
+    }
 }

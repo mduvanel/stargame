@@ -36,9 +36,9 @@ public class DPadController
 	/** Enum for the DPadController state machine */
 	private enum ControlState
 	{
-		MENU_HIGHLEVEL,
+		MENU_HIGH_LEVEL,
 		MENU_ACTIONS,
-		STATE_SELECTDIR,
+		STATE_SELECT_DIR,
 		STATE_ACTION,
 		STATE_VIEW,
 		STATE_NONE
@@ -77,7 +77,7 @@ public class DPadController
 	 */
 	public void Reset()
 	{
-		mControlState = ControlState.MENU_HIGHLEVEL;
+		mControlState = ControlState.MENU_HIGH_LEVEL;
 		mActionMenuPos = 0;
 	}
 
@@ -103,7 +103,7 @@ public class DPadController
 			strLeft = GetLeftActionString();
 			strRight = GetRightActionString();
 			break;
-		case MENU_HIGHLEVEL:
+		case MENU_HIGH_LEVEL:
 			if ( !mBattle.GetActiveUnit().IsMovePerformed() )
 			{
 				strTop = mContext.getString( R.string.move_action );
@@ -121,7 +121,7 @@ public class DPadController
 		case STATE_ACTION:
 		case STATE_VIEW:
 			strCenter = "toto";
-		case STATE_SELECTDIR:
+		case STATE_SELECT_DIR:
 			strTop = mContext.getString( R.string.up );
 			strBottom = mContext.getString( R.string.down );
 			strLeft = mContext.getString( R.string.left );
@@ -253,12 +253,12 @@ public class DPadController
 	{
 		switch( mControlState )
 		{
-		case MENU_HIGHLEVEL:
+		case MENU_HIGH_LEVEL:
 		case STATE_NONE:
 			break; // Cannot cancel or go back
-		case STATE_SELECTDIR:
+		case STATE_SELECT_DIR:
 		case MENU_ACTIONS:
-			mControlState = ControlState.MENU_HIGHLEVEL;
+			mControlState = ControlState.MENU_HIGH_LEVEL;
 			break;
 		case STATE_ACTION:
 			mActionMenuPos = 0;
@@ -266,7 +266,7 @@ public class DPadController
 			// We don't go back to the same menu if we are on MOVE action or other
 			if ( mBattle.GetCurrentAction().GetActionType() == R.string.move_action )
 			{
-				mControlState = ControlState.MENU_HIGHLEVEL;
+				mControlState = ControlState.MENU_HIGH_LEVEL;
 			}
 			else
 			{
@@ -280,7 +280,7 @@ public class DPadController
 			mBattle.SetSelectedPosition( mBattle.GetActiveUnit().GetCell().GetPos() );
 			break;
 		case STATE_VIEW:
-			mControlState = ControlState.MENU_HIGHLEVEL;
+			mControlState = ControlState.MENU_HIGH_LEVEL;
 
 			// Center back on the active unit
 			mBattle.SetSelectedPosition( mBattle.GetActiveUnit().GetCell().GetPos() );
@@ -294,17 +294,17 @@ public class DPadController
 	{
 		switch( mControlState )
 		{
-		case MENU_HIGHLEVEL:
+		case MENU_HIGH_LEVEL:
 		case MENU_ACTIONS:
 		case STATE_NONE:
-		case STATE_SELECTDIR:
+		case STATE_SELECT_DIR:
 			break; // no action mapped
 		case STATE_ACTION:
 			mBattle.GetCurrentAction().SetTarget( mBattle.GetSelectedCell() );
 
 			if ( mBattle.GetCurrentAction().PerformAction() )
 			{
-				mControlState = ControlState.MENU_HIGHLEVEL;
+				mControlState = ControlState.MENU_HIGH_LEVEL;
 				DisplayState();
 
 				synchronized ( BattleThread2D.mDrawingLock )
@@ -329,7 +329,7 @@ public class DPadController
 	{
 		switch( mControlState )
 		{
-		case MENU_HIGHLEVEL:
+		case MENU_HIGH_LEVEL:
 			// Up is Move
 			if ( !mBattle.GetActiveUnit().IsMovePerformed() )
 			{
@@ -361,7 +361,7 @@ public class DPadController
 			break;
 		case STATE_NONE:
 			break;
-		case STATE_SELECTDIR:
+		case STATE_SELECT_DIR:
 			mBattle.GetActiveUnit().SetOrientation( Orientation.NORTH.TransformOrientation( oOrientation ) );
         	EndTurn();
 			break;
@@ -378,8 +378,8 @@ public class DPadController
 	{
 		switch( mControlState )
 		{
-		case MENU_HIGHLEVEL:
-			mControlState = ControlState.STATE_SELECTDIR;
+		case MENU_HIGH_LEVEL:
+			mControlState = ControlState.STATE_SELECT_DIR;
 			break;
 		case MENU_ACTIONS:
 			Tree< BattleAction > treeActions = mBattle.GetActiveUnit().GetActions();
@@ -400,7 +400,7 @@ public class DPadController
 			break;
 		case STATE_NONE:
 			break;
-		case STATE_SELECTDIR:
+		case STATE_SELECT_DIR:
 			mBattle.GetActiveUnit().SetOrientation( Orientation.SOUTH.TransformOrientation( oOrientation ) );
         	EndTurn();
 			break;
@@ -417,7 +417,7 @@ public class DPadController
 	{
 		switch( mControlState )
 		{
-		case MENU_HIGHLEVEL:
+		case MENU_HIGH_LEVEL:
 			// Left is free view
 			mControlState = ControlState.STATE_VIEW;
 			break;
@@ -433,7 +433,7 @@ public class DPadController
 			break;
 		case STATE_NONE:
 			break;
-		case STATE_SELECTDIR:
+		case STATE_SELECT_DIR:
 			mBattle.GetActiveUnit().SetOrientation( Orientation.WEST.TransformOrientation( oOrientation ) );
         	EndTurn();
 			break;
@@ -450,7 +450,7 @@ public class DPadController
 	{
 		switch( mControlState )
 		{
-		case MENU_HIGHLEVEL:
+		case MENU_HIGH_LEVEL:
 			// Right is Actions menu
 			if ( !mBattle.GetActiveUnit().IsActionPerformed() )
 			{
@@ -468,7 +468,7 @@ public class DPadController
 			break;
 		case STATE_NONE:
 			break;
-		case STATE_SELECTDIR:
+		case STATE_SELECT_DIR:
 			mBattle.GetActiveUnit().SetOrientation( Orientation.EAST.TransformOrientation( oOrientation ) );
         	EndTurn();
 			break;

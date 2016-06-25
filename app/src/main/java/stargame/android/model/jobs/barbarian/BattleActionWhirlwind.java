@@ -198,9 +198,9 @@ public class BattleActionWhirlwind extends BattleAction implements ISavable
         oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
 
         int[] aDamages = oObjectBundle.getIntArray( M_VEC_DAMAGE );
-        for ( int i = 0; i < aDamages.length; ++i )
+        for ( int damage : aDamages )
         {
-            oAction.mVecDamage.add( aDamages[ i ] );
+            oAction.mVecDamage.add( damage );
         }
 
         return oAction;

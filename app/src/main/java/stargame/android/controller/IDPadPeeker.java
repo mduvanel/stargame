@@ -16,7 +16,5 @@ public interface IDPadPeeker
         NONE
     }
 
-    ;
-
-    public DPadZone PeekZone();
+    DPadZone PeekZone();
 }

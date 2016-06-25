@@ -33,9 +33,7 @@ public class UnitJobOracle extends UnitJob
     @Override
     public Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit )
     {
-        Vector< BattleAction > vecActions = new Vector< BattleAction >();
-        //vecActions.add( new BattleActionWhirlwind( oBattle, oUnit ) );
-        return vecActions;
+        return new Vector< BattleAction >();
     }
 
     public static IJobCreator GetCreator()

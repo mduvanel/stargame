@@ -7,5 +7,5 @@ import stargame.android.model.UnitJob;
 
 public interface IJobCreator
 {
-    public UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources );
+    UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources );
 }

@@ -20,7 +20,7 @@ public class UnitStatusFactory implements ISavable
     public UnitStatus loadState( Bundle oGlobalMap, String strObjKey )
     {
         // attempt to create a UnitStatus out of all known UnitStatus subclasses
-        UnitStatus oStatus = null;
+        UnitStatus oStatus;
 
         if ( ( oStatus = UnitStatusBarrier.loadState( oGlobalMap, strObjKey ) ) != null )
         {
@@ -37,6 +37,6 @@ public class UnitStatusFactory implements ISavable
 
         // Log the event, it is probably happening because a factory has been forgotten...
         Logger.e( String.format( "Failed to create UnitStatus '%s' from Bundle", strObjKey ) );
-        return oStatus;
+        return null;
     }
 }

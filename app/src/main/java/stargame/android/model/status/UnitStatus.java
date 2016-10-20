@@ -60,14 +60,7 @@ public abstract class UnitStatus extends Observable implements ISavable
         }
 
         mTurnsLeft--;
-        if ( mTurnsLeft == 0 )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return ( mTurnsLeft == 0 );
     }
 
     protected void SaveUnitStatusData( Bundle oObjectMap, Bundle oGlobalMap )

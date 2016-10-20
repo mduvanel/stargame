@@ -61,7 +61,7 @@ public class Attributes implements ISavable
      */
     private int mVerticalJump;
 
-    private static final String M_VJUMP = "VJump";
+    private static final String M_VERTICAL_JUMP = "VJump";
 
     public int GetVerticalJump()
     {
@@ -73,7 +73,7 @@ public class Attributes implements ISavable
      */
     private int mHorizontalJump;
 
-    private static final String M_HJUMP = "HJump";
+    private static final String M_HORIZONTAL_JUMP = "HJump";
 
     public int GetHorizontalJump()
     {
@@ -85,7 +85,7 @@ public class Attributes implements ISavable
      */
     private int mPhysicalDef;
 
-    private static final String M_PDEF = "PDef";
+    private static final String M_PHY_DEF = "PDef";
 
     public int GetPhysicalDef()
     {
@@ -97,7 +97,7 @@ public class Attributes implements ISavable
      */
     private int mMagicDef;
 
-    private static final String M_MDEF = "MDef";
+    private static final String M_MAGIC_DEF = "MDef";
 
     public int GetMagicDef()
     {
@@ -133,7 +133,7 @@ public class Attributes implements ISavable
      */
     private int mMagicPower;
 
-    private static final String M_MPOWER = "MPower";
+    private static final String M_MAGIC_POWER = "MPower";
 
     public int GetMagicPower()
     {
@@ -157,7 +157,7 @@ public class Attributes implements ISavable
      */
     private int mMagicDodge;
 
-    private static final String M_MDODGE = "MDodge";
+    private static final String M_MAGIC_DODGE = "MDodge";
 
     public int GetMagicDodge()
     {
@@ -205,7 +205,7 @@ public class Attributes implements ISavable
      */
     private int mMagicHitChance;
 
-    private static final String M_MHIT = "MHit";
+    private static final String M_MAGIC_HIT = "MHit";
 
     public int GetMagicHitChance()
     {
@@ -329,19 +329,19 @@ public class Attributes implements ISavable
         oObjectMap.putInt( M_DEXTERITY, mDexterity );
         oObjectMap.putInt( M_DODGE, mDodge );
         oObjectMap.putInt( M_HIT, mHitChance );
-        oObjectMap.putInt( M_HJUMP, mHorizontalJump );
+        oObjectMap.putInt( M_HORIZONTAL_JUMP, mHorizontalJump );
         oObjectMap.putInt( M_HP, mHitPoints );
-        oObjectMap.putInt( M_MDEF, mMagicDef );
-        oObjectMap.putInt( M_MDODGE, mMagicDodge );
-        oObjectMap.putInt( M_MHIT, mMagicHitChance );
+        oObjectMap.putInt( M_MAGIC_DEF, mMagicDef );
+        oObjectMap.putInt( M_MAGIC_DODGE, mMagicDodge );
+        oObjectMap.putInt( M_MAGIC_HIT, mMagicHitChance );
         oObjectMap.putInt( M_MOVEMENT, mMovement );
-        oObjectMap.putInt( M_MPOWER, mMagicPower );
-        oObjectMap.putInt( M_PDEF, mPhysicalDef );
+        oObjectMap.putInt( M_MAGIC_POWER, mMagicPower );
+        oObjectMap.putInt( M_PHY_DEF, mPhysicalDef );
         oObjectMap.putInt( M_RANGE, mAttackRange );
         oObjectMap.putInt( M_RP, mResourcePoints );
         oObjectMap.putInt( M_SPEED, mSpeed );
         oObjectMap.putInt( M_STRENGTH, mStrength );
-        oObjectMap.putInt( M_VJUMP, mVerticalJump );
+        oObjectMap.putInt( M_VERTICAL_JUMP, mVerticalJump );
     }
 
     public boolean LoadFromResources( Resources oResources, String strResourceName )
@@ -446,26 +446,26 @@ public class Attributes implements ISavable
             return null;
         }
 
-        Attributes oAttribs = new Attributes();
+        Attributes oAttributes = new Attributes();
 
-        oAttribs.mDexterity = oObjectBundle.getInt( M_DEXTERITY );
-        oAttribs.mDodge = oObjectBundle.getInt( M_DODGE );
-        oAttribs.mHitChance = oObjectBundle.getInt( M_HIT );
-        oAttribs.mHorizontalJump = oObjectBundle.getInt( M_HJUMP );
-        oAttribs.mHitPoints = oObjectBundle.getInt( M_HP );
-        oAttribs.mMagicDef = oObjectBundle.getInt( M_MDEF );
-        oAttribs.mMagicDodge = oObjectBundle.getInt( M_MDODGE );
-        oAttribs.mMagicHitChance = oObjectBundle.getInt( M_MHIT );
-        oAttribs.mMovement = oObjectBundle.getInt( M_MOVEMENT );
-        oAttribs.mMagicPower = oObjectBundle.getInt( M_MPOWER );
-        oAttribs.mPhysicalDef = oObjectBundle.getInt( M_PDEF );
-        oAttribs.mAttackRange = oObjectBundle.getInt( M_RANGE );
-        oAttribs.mResourcePoints = oObjectBundle.getInt( M_RP );
-        oAttribs.mSpeed = oObjectBundle.getInt( M_SPEED );
-        oAttribs.mStrength = oObjectBundle.getInt( M_STRENGTH );
-        oAttribs.mVerticalJump = oObjectBundle.getInt( M_VJUMP );
+        oAttributes.mDexterity = oObjectBundle.getInt( M_DEXTERITY );
+        oAttributes.mDodge = oObjectBundle.getInt( M_DODGE );
+        oAttributes.mHitChance = oObjectBundle.getInt( M_HIT );
+        oAttributes.mHorizontalJump = oObjectBundle.getInt( M_HORIZONTAL_JUMP );
+        oAttributes.mHitPoints = oObjectBundle.getInt( M_HP );
+        oAttributes.mMagicDef = oObjectBundle.getInt( M_MAGIC_DEF );
+        oAttributes.mMagicDodge = oObjectBundle.getInt( M_MAGIC_DODGE );
+        oAttributes.mMagicHitChance = oObjectBundle.getInt( M_MAGIC_HIT );
+        oAttributes.mMovement = oObjectBundle.getInt( M_MOVEMENT );
+        oAttributes.mMagicPower = oObjectBundle.getInt( M_MAGIC_POWER );
+        oAttributes.mPhysicalDef = oObjectBundle.getInt( M_PHY_DEF );
+        oAttributes.mAttackRange = oObjectBundle.getInt( M_RANGE );
+        oAttributes.mResourcePoints = oObjectBundle.getInt( M_RP );
+        oAttributes.mSpeed = oObjectBundle.getInt( M_SPEED );
+        oAttributes.mStrength = oObjectBundle.getInt( M_STRENGTH );
+        oAttributes.mVerticalJump = oObjectBundle.getInt( M_VERTICAL_JUMP );
 
-        return oAttribs;
+        return oAttributes;
     }
 
     public ISavable createInstance( Bundle oGlobalMap, String strObjKey )

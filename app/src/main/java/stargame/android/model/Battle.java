@@ -97,7 +97,7 @@ public class Battle extends Observable implements ISavable
         mBattleField = new BattleField( oParser );
         mBattleField.SetSelectedCell( new Position( 2, 3 ) );
 
-        BattleUnit oUnit = null;
+        BattleUnit oUnit;
         mVecUnits = new Vector< BattleUnit >();
         oUnit = new BattleUnit( mBattleField.GetCell( new Position( 1, 3 ) ), Orientation.EAST,
                                 JobType.TYPE_SOLDIER, this, oResources );
@@ -170,17 +170,7 @@ public class Battle extends Observable implements ISavable
 
     public boolean IsDialogFinished()
     {
-        if ( mCurrentDialog != null )
-        {
-            return mCurrentDialog.IsDialogFinished();
-        }
-        return true;
-    }
-
-    public void SetCurrentAction( int iBattleActionType )
-    {
-        BattleAction oAction = mActiveUnit.GetAction( iBattleActionType );
-        SetCurrentAction( oAction );
+        return mCurrentDialog == null || mCurrentDialog.IsDialogFinished();
     }
 
     public void SetCurrentAction( BattleAction oAction )
@@ -287,7 +277,7 @@ public class Battle extends Observable implements ISavable
     }
 
     /**
-     * Made public so that Controler can send notifications too...
+     * Made public so that Controller can send notifications too...
      */
     public void NotifyChange()
     {

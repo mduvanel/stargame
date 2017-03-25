@@ -1,7 +1,5 @@
 package stargame.android.model.jobs.barbarian;
 
-import android.os.Bundle;
-
 import java.util.Vector;
 
 import stargame.android.R;
@@ -10,6 +8,7 @@ import stargame.android.model.BattleAction;
 import stargame.android.model.BattleCell;
 import stargame.android.model.BattleUnit;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Position;
 import stargame.android.util.RandomGenerator;
@@ -28,15 +27,15 @@ public class BattleActionWhirlwind extends BattleAction implements ISavable
 
     private static final String M_VEC_DAMAGE = "Damages";
 
-    static final int INVALID_TARGET = -1;
+    private static final int INVALID_TARGET = -1;
 
-    public BattleActionWhirlwind()
+    private BattleActionWhirlwind()
     {
         super();
         mVecDamage = new Vector< Integer >();
     }
 
-    public BattleActionWhirlwind( Battle oBattle, BattleUnit oUnit )
+    BattleActionWhirlwind( Battle oBattle, BattleUnit oUnit )
     {
         super( oBattle, oUnit );
         mActionType = R.string.whirlwind_action;
@@ -92,17 +91,17 @@ public class BattleActionWhirlwind extends BattleAction implements ISavable
             if ( oTarget.mCell.GetUnit() != null )
             {
                 // Check if attack lands: compute chance of hitting the target
-                if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <= mSourceUnit.GetHitChance(
-                        oTarget.mCell.GetUnit() ) )
+                if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <=
+                        mSourceUnit.GetHitChance( oTarget.mCell.GetUnit() ) )
                 {
                     // Get the attack information from the attacking unit
-                    double dFinalDamage = Math.max( 1,
-                                                    mSourceUnit.GetUnit().GetResultingAttributes().GetStrength() -
-                                                            oTarget.mCell.GetUnit().GetUnit().GetResultingAttributes().GetPhysicalDef() );
+                    double dFinalDamage = Math.max(
+                            1, mSourceUnit.GetUnit().GetResultingAttributes().GetStrength() -
+                                    oTarget.mCell.GetUnit().GetUnit().GetResultingAttributes().GetPhysicalDef() );
 
                     // Check critical chance
-                    if ( RandomGenerator.GetInstance().GetRandom( 1,
-                                                                  100 ) <= mSourceUnit.GetCritChance() )
+                    if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <=
+                            mSourceUnit.GetCritChance() )
                     {
                         dFinalDamage *= 1.5;
                         oTarget.mActionStatus = ActionStatus.STATUS_CRITICAL;
@@ -116,7 +115,8 @@ public class BattleActionWhirlwind extends BattleAction implements ISavable
                     dFinalDamage = RandomGenerator.GetInstance().GetRandom(
                             dFinalDamage - ( dFinalDamage / 10 ),
                             dFinalDamage + ( dFinalDamage / 10 ) );
-                    mVecDamage.add( oTarget.mCell.GetUnit().ApplyDamage( dFinalDamage ) );
+                    mVecDamage.add( oTarget.mCell.GetUnit().ApplyDamage(
+                            dFinalDamage ) );
                 }
                 else
                 {
@@ -167,10 +167,10 @@ public class BattleActionWhirlwind extends BattleAction implements ISavable
         return ( oPos == mSourceUnit.GetCell().GetPos() );
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        super.SaveBattleActionState( oObjectMap, oGlobalMap );
+        super.SaveBattleActionState( oObjectStore, oGlobalStore );
 
         int[] aDamages = new int[ mVecDamage.size() ];
         int iCounter = 0;
@@ -179,15 +179,16 @@ public class BattleActionWhirlwind extends BattleAction implements ISavable
             aDamages[ iCounter++ ] = iDamage;
         }
 
-        oObjectMap.putIntArray( M_VEC_DAMAGE, aDamages );
+        oObjectStore.putIntArray( M_VEC_DAMAGE, aDamages );
     }
 
-    public static BattleActionWhirlwind loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleActionWhirlwind loadState( IStorage oGlobalStore,
+                                                   String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleActionWhirlwind.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, BattleActionWhirlwind.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
@@ -195,9 +196,9 @@ public class BattleActionWhirlwind extends BattleAction implements ISavable
         BattleActionWhirlwind oAction = new BattleActionWhirlwind();
 
         // Load parent info
-        oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
+        oAction.LoadBattleActionState( oObjectStore, oGlobalStore );
 
-        int[] aDamages = oObjectBundle.getIntArray( M_VEC_DAMAGE );
+        int[] aDamages = oObjectStore.getIntArray( M_VEC_DAMAGE );
         for ( int damage : aDamages )
         {
             oAction.mVecDamage.add( damage );
@@ -206,8 +207,8 @@ public class BattleActionWhirlwind extends BattleAction implements ISavable
         return oAction;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

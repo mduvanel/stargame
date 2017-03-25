@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 public class Position implements ISavable
@@ -210,32 +211,33 @@ public class Position implements ISavable
         return String.format( "[%d:%d]", mPosX, mPosY );
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_POS_X, mPosX );
-        oObjectMap.putInt( M_POS_Y, mPosY );
+        oObjectStore.putInt( M_POS_X, mPosX );
+        oObjectStore.putInt( M_POS_Y, mPosY );
     }
 
-    public static Position loadState( Bundle oGlobalMap, String strObjKey )
+    public static Position loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             Position.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey,
+                Position.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         Position oPos = new Position();
 
-        oPos.mPosX = oObjectBundle.getInt( M_POS_X );
-        oPos.mPosY = oObjectBundle.getInt( M_POS_Y );
+        oPos.mPosX = oObjectStore.getInt( M_POS_X );
+        oPos.mPosY = oObjectStore.getInt( M_POS_Y );
 
         return oPos;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

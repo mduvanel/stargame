@@ -2,19 +2,19 @@ package stargame.android.model;
 
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.os.Bundle;
 
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Logger;
 
 /**
- * This class describes all the attributes that a Unit has. Jobs and equipments also
- * have attributes.
+ * This class describes all the attributes that a Unit has. Jobs and equipments
+ * also have attributes.
  *
  * @author Duduche
  */
@@ -39,7 +39,7 @@ public class Attributes implements ISavable
 
     private static final String M_RP = "RP";
 
-    public int GetResourcePoints()
+    int GetResourcePoints()
     {
         return mResourcePoints;
     }
@@ -51,7 +51,7 @@ public class Attributes implements ISavable
 
     private static final String M_MOVEMENT = "Movement";
 
-    public int GetMovement()
+    int GetMovement()
     {
         return mMovement;
     }
@@ -63,7 +63,7 @@ public class Attributes implements ISavable
 
     private static final String M_VERTICAL_JUMP = "VJump";
 
-    public int GetVerticalJump()
+    int GetVerticalJump()
     {
         return mVerticalJump;
     }
@@ -75,7 +75,7 @@ public class Attributes implements ISavable
 
     private static final String M_HORIZONTAL_JUMP = "HJump";
 
-    public int GetHorizontalJump()
+    int GetHorizontalJump()
     {
         return mHorizontalJump;
     }
@@ -123,7 +123,7 @@ public class Attributes implements ISavable
 
     private static final String M_DEXTERITY = "Dexterity";
 
-    public int GetDexterity()
+    int GetDexterity()
     {
         return mDexterity;
     }
@@ -147,7 +147,7 @@ public class Attributes implements ISavable
 
     private static final String M_DODGE = "Dodge";
 
-    public int GetDodge()
+    int GetDodge()
     {
         return mDodge;
     }
@@ -159,7 +159,7 @@ public class Attributes implements ISavable
 
     private static final String M_MAGIC_DODGE = "MDodge";
 
-    public int GetMagicDodge()
+    int GetMagicDodge()
     {
         return mMagicDodge;
     }
@@ -171,7 +171,7 @@ public class Attributes implements ISavable
 
     private static final String M_SPEED = "Speed";
 
-    public int GetSpeed()
+    int GetSpeed()
     {
         return mSpeed;
     }
@@ -183,7 +183,7 @@ public class Attributes implements ISavable
 
     private static final String M_RANGE = "Range";
 
-    public int GetAttackRange()
+    int GetAttackRange()
     {
         return mAttackRange;
     }
@@ -195,7 +195,7 @@ public class Attributes implements ISavable
 
     private static final String M_HIT = "Hit";
 
-    public int GetHitChance()
+    int GetHitChance()
     {
         return mHitChance;
     }
@@ -207,7 +207,7 @@ public class Attributes implements ISavable
 
     private static final String M_MAGIC_HIT = "MHit";
 
-    public int GetMagicHitChance()
+    int GetMagicHitChance()
     {
         return mMagicHitChance;
     }
@@ -235,10 +235,12 @@ public class Attributes implements ISavable
     /**
      * "Brute-force" constructor
      */
-    public Attributes( int iHitPoints, int iResourcePoints, int iMovement, int iVerticalJump,
-                       int iHorizontalJump, int iPhysicalDef, int iMagicDef, int iStrength,
-                       int iDexterity, int iMagicPower, int iDodge, int iMagicDodge, int iSpeed,
-                       int iAttackRange, int iHitChance, int iMagicHitChance )
+    public Attributes(
+            int iHitPoints, int iResourcePoints, int iMovement,
+            int iVerticalJump, int iHorizontalJump, int iPhysicalDef,
+            int iMagicDef, int iStrength, int iDexterity, int iMagicPower,
+            int iDodge, int iMagicDodge, int iSpeed, int iAttackRange,
+            int iHitChance, int iMagicHitChance )
     {
         mHitPoints = iHitPoints;
         mResourcePoints = iResourcePoints;
@@ -284,7 +286,7 @@ public class Attributes implements ISavable
     /**
      * Add the given attributes to the current Attributes
      */
-    public void AddAttributes( Attributes oAttr )
+    void AddAttributes( Attributes oAttr )
     {
         mHitPoints += oAttr.mHitPoints;
         mResourcePoints += oAttr.mResourcePoints;
@@ -324,32 +326,33 @@ public class Attributes implements ISavable
         mMagicHitChance = 0;
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_DEXTERITY, mDexterity );
-        oObjectMap.putInt( M_DODGE, mDodge );
-        oObjectMap.putInt( M_HIT, mHitChance );
-        oObjectMap.putInt( M_HORIZONTAL_JUMP, mHorizontalJump );
-        oObjectMap.putInt( M_HP, mHitPoints );
-        oObjectMap.putInt( M_MAGIC_DEF, mMagicDef );
-        oObjectMap.putInt( M_MAGIC_DODGE, mMagicDodge );
-        oObjectMap.putInt( M_MAGIC_HIT, mMagicHitChance );
-        oObjectMap.putInt( M_MOVEMENT, mMovement );
-        oObjectMap.putInt( M_MAGIC_POWER, mMagicPower );
-        oObjectMap.putInt( M_PHY_DEF, mPhysicalDef );
-        oObjectMap.putInt( M_RANGE, mAttackRange );
-        oObjectMap.putInt( M_RP, mResourcePoints );
-        oObjectMap.putInt( M_SPEED, mSpeed );
-        oObjectMap.putInt( M_STRENGTH, mStrength );
-        oObjectMap.putInt( M_VERTICAL_JUMP, mVerticalJump );
+        oObjectStore.putInt( M_DEXTERITY, mDexterity );
+        oObjectStore.putInt( M_DODGE, mDodge );
+        oObjectStore.putInt( M_HIT, mHitChance );
+        oObjectStore.putInt( M_HORIZONTAL_JUMP, mHorizontalJump );
+        oObjectStore.putInt( M_HP, mHitPoints );
+        oObjectStore.putInt( M_MAGIC_DEF, mMagicDef );
+        oObjectStore.putInt( M_MAGIC_DODGE, mMagicDodge );
+        oObjectStore.putInt( M_MAGIC_HIT, mMagicHitChance );
+        oObjectStore.putInt( M_MOVEMENT, mMovement );
+        oObjectStore.putInt( M_MAGIC_POWER, mMagicPower );
+        oObjectStore.putInt( M_PHY_DEF, mPhysicalDef );
+        oObjectStore.putInt( M_RANGE, mAttackRange );
+        oObjectStore.putInt( M_RP, mResourcePoints );
+        oObjectStore.putInt( M_SPEED, mSpeed );
+        oObjectStore.putInt( M_STRENGTH, mStrength );
+        oObjectStore.putInt( M_VERTICAL_JUMP, mVerticalJump );
     }
 
-    public boolean LoadFromResources( Resources oResources, String strResourceName )
+    boolean LoadFromResources( Resources oResources, String strResourceName )
     {
         boolean bSuccess = false;
 
         // Create the parser from the UnitJob type
-        int id = oResources.getIdentifier( strResourceName, "xml", "stargame.android" );
+        int id = oResources.getIdentifier(
+                strResourceName, "xml", "stargame.android" );
         XmlResourceParser oParser = oResources.getXml( id );
         if ( null != oParser )
         {
@@ -367,7 +370,8 @@ public class Attributes implements ISavable
                         }
                         else if ( oParser.getName().equals( "ResourcePoints" ) )
                         {
-                            mResourcePoints = Integer.parseInt( oParser.nextText() );
+                            mResourcePoints = Integer.parseInt(
+                                    oParser.nextText() );
                         }
                         else if ( oParser.getName().equals( "Power" ) )
                         {
@@ -399,7 +403,8 @@ public class Attributes implements ISavable
                         }
                         else if ( oParser.getName().equals( "MHit" ) )
                         {
-                            mMagicHitChance = Integer.parseInt( oParser.nextText() );
+                            mMagicHitChance = Integer.parseInt(
+                                    oParser.nextText() );
                         }
                         else if ( oParser.getName().equals( "Speed" ) )
                         {
@@ -411,24 +416,30 @@ public class Attributes implements ISavable
                         }
                         else if ( oParser.getName().equals( "HJump" ) )
                         {
-                            mHorizontalJump = Integer.parseInt( oParser.nextText() );
+                            mHorizontalJump = Integer.parseInt(
+                                    oParser.nextText() );
                         }
                         else if ( oParser.getName().equals( "VJump" ) )
                         {
-                            mVerticalJump = Integer.parseInt( oParser.nextText() );
+                            mVerticalJump = Integer.parseInt(
+                                    oParser.nextText() );
                         }
                     }
                     eventType = oParser.next();
                 }
+
+                bSuccess = true;
             }
             catch ( XmlPullParserException e )
             {
-                Logger.e( String.format( "XML Error while loading: %s", e.getMessage() ) );
+                Logger.e( String.format(
+                        "XML Error while loading: %s", e.getMessage() ) );
                 e.printStackTrace();
             }
             catch ( IOException e )
             {
-                Logger.e( String.format( "XML Error while loading: %s", e.getMessage() ) );
+                Logger.e( String.format(
+                        "XML Error while loading: %s", e.getMessage() ) );
                 e.printStackTrace();
             }
         }
@@ -436,40 +447,40 @@ public class Attributes implements ISavable
         return bSuccess;
     }
 
-    public static Attributes loadState( Bundle oGlobalMap, String strObjKey )
+    public static Attributes loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             Attributes.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, Attributes.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         Attributes oAttributes = new Attributes();
 
-        oAttributes.mDexterity = oObjectBundle.getInt( M_DEXTERITY );
-        oAttributes.mDodge = oObjectBundle.getInt( M_DODGE );
-        oAttributes.mHitChance = oObjectBundle.getInt( M_HIT );
-        oAttributes.mHorizontalJump = oObjectBundle.getInt( M_HORIZONTAL_JUMP );
-        oAttributes.mHitPoints = oObjectBundle.getInt( M_HP );
-        oAttributes.mMagicDef = oObjectBundle.getInt( M_MAGIC_DEF );
-        oAttributes.mMagicDodge = oObjectBundle.getInt( M_MAGIC_DODGE );
-        oAttributes.mMagicHitChance = oObjectBundle.getInt( M_MAGIC_HIT );
-        oAttributes.mMovement = oObjectBundle.getInt( M_MOVEMENT );
-        oAttributes.mMagicPower = oObjectBundle.getInt( M_MAGIC_POWER );
-        oAttributes.mPhysicalDef = oObjectBundle.getInt( M_PHY_DEF );
-        oAttributes.mAttackRange = oObjectBundle.getInt( M_RANGE );
-        oAttributes.mResourcePoints = oObjectBundle.getInt( M_RP );
-        oAttributes.mSpeed = oObjectBundle.getInt( M_SPEED );
-        oAttributes.mStrength = oObjectBundle.getInt( M_STRENGTH );
-        oAttributes.mVerticalJump = oObjectBundle.getInt( M_VERTICAL_JUMP );
+        oAttributes.mDexterity = oObjectStore.getInt( M_DEXTERITY );
+        oAttributes.mDodge = oObjectStore.getInt( M_DODGE );
+        oAttributes.mHitChance = oObjectStore.getInt( M_HIT );
+        oAttributes.mHorizontalJump = oObjectStore.getInt( M_HORIZONTAL_JUMP );
+        oAttributes.mHitPoints = oObjectStore.getInt( M_HP );
+        oAttributes.mMagicDef = oObjectStore.getInt( M_MAGIC_DEF );
+        oAttributes.mMagicDodge = oObjectStore.getInt( M_MAGIC_DODGE );
+        oAttributes.mMagicHitChance = oObjectStore.getInt( M_MAGIC_HIT );
+        oAttributes.mMovement = oObjectStore.getInt( M_MOVEMENT );
+        oAttributes.mMagicPower = oObjectStore.getInt( M_MAGIC_POWER );
+        oAttributes.mPhysicalDef = oObjectStore.getInt( M_PHY_DEF );
+        oAttributes.mAttackRange = oObjectStore.getInt( M_RANGE );
+        oAttributes.mResourcePoints = oObjectStore.getInt( M_RP );
+        oAttributes.mSpeed = oObjectStore.getInt( M_SPEED );
+        oAttributes.mStrength = oObjectStore.getInt( M_STRENGTH );
+        oAttributes.mVerticalJump = oObjectStore.getInt( M_VERTICAL_JUMP );
 
         return oAttributes;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

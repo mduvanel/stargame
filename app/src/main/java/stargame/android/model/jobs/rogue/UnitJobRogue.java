@@ -1,7 +1,6 @@
 package stargame.android.model.jobs.rogue;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import java.util.Vector;
 
@@ -13,6 +12,7 @@ import stargame.android.model.UnitJob;
 import stargame.android.model.jobs.IJobCreator;
 import stargame.android.model.jobs.JobType;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 public class UnitJobRogue extends UnitJob
@@ -22,7 +22,7 @@ public class UnitJobRogue extends UnitJob
         super();
     }
 
-    public UnitJobRogue( Unit oUnit, Resources oResources )
+    private UnitJobRogue( Unit oUnit, Resources oResources )
     {
         super( oUnit );
 
@@ -43,31 +43,31 @@ public class UnitJobRogue extends UnitJob
         return new UnitJobRogueCreator();
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        super.SaveUnitJobData( oObjectMap, oGlobalMap );
+        super.SaveUnitJobData( oObjectStore, oGlobalStore );
     }
 
-    public static UnitJobRogue loadState( Bundle oGlobalMap, String strObjKey )
+    public static UnitJobRogue loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             UnitJobRogue.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, UnitJobRogue.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         UnitJobRogue oUnitJob = new UnitJobRogue();
 
-        oUnitJob.LoadUnitJobData( oObjectBundle, oGlobalMap );
+        oUnitJob.LoadUnitJobData( oObjectStore, oGlobalStore );
 
         return oUnitJob;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
     /**
@@ -75,7 +75,8 @@ public class UnitJobRogue extends UnitJob
      */
     private static class UnitJobRogueCreator implements IJobCreator
     {
-        public UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources )
+        public UnitJob JobCreate( Unit oUnit, JobType eType,
+                                  Resources oResources )
         {
             if ( eType == JobType.TYPE_ROGUE )
             {

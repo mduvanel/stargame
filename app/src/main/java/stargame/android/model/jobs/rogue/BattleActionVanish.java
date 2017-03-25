@@ -1,13 +1,12 @@
 package stargame.android.model.jobs.rogue;
 
-import android.os.Bundle;
-
 import stargame.android.R;
 import stargame.android.model.Battle;
 import stargame.android.model.BattleAction;
 import stargame.android.model.BattleUnit;
 import stargame.android.model.status.UnitStatusInvisible;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Position;
 
@@ -16,20 +15,20 @@ import stargame.android.util.Position;
  *
  * @author Duduche
  */
-public class BattleActionVanish extends BattleAction implements ISavable
+class BattleActionVanish extends BattleAction implements ISavable
 {
-    int mVanishDuration;
+    private int mVanishDuration;
 
     private static final String M_DURATION = "Duration";
 
     private static final int M_DEFAULT_DURATION = 3;
 
-    public BattleActionVanish()
+    private BattleActionVanish()
     {
         super();
     }
 
-    public BattleActionVanish( Battle oBattle, BattleUnit oUnit )
+    BattleActionVanish( Battle oBattle, BattleUnit oUnit )
     {
         super( oBattle, oUnit );
         mActionType = R.string.vanish_action;
@@ -43,7 +42,8 @@ public class BattleActionVanish extends BattleAction implements ISavable
 
     public void ExecuteAction()
     {
-        mSourceUnit.SetStatus( new UnitStatusInvisible( mVanishDuration, mSourceUnit ) );
+        mSourceUnit.SetStatus( new UnitStatusInvisible(
+                mVanishDuration, mSourceUnit ) );
         mSourceUnit.SetActionPerformed();
     }
 
@@ -61,20 +61,21 @@ public class BattleActionVanish extends BattleAction implements ISavable
         return oPos.Equals( mSourceUnit.GetCell().GetPos() );
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        super.SaveBattleActionState( oObjectMap, oGlobalMap );
+        super.SaveBattleActionState( oObjectStore, oGlobalStore );
 
-        oObjectMap.putInt( M_DURATION, mVanishDuration );
+        oObjectStore.putInt( M_DURATION, mVanishDuration );
     }
 
-    public static BattleActionVanish loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleActionVanish loadState( IStorage oGlobalStore,
+                                                String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleActionVanish.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, BattleActionVanish.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
@@ -82,15 +83,15 @@ public class BattleActionVanish extends BattleAction implements ISavable
         BattleActionVanish oAction = new BattleActionVanish();
 
         // Load parent info
-        oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
+        oAction.LoadBattleActionState( oObjectStore, oGlobalStore );
 
-        oAction.mVanishDuration = oObjectBundle.getInt( M_DURATION );
+        oAction.mVanishDuration = oObjectStore.getInt( M_DURATION );
 
         return oAction;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

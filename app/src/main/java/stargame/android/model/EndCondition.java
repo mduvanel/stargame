@@ -1,10 +1,9 @@
 package stargame.android.model;
 
-import android.os.Bundle;
-
 import java.util.Vector;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 /**
@@ -14,7 +13,7 @@ import stargame.android.storage.SavableHelper;
  */
 public class EndCondition implements ISavable
 {
-    public enum EndConditionType
+    private enum EndConditionType
     {
         TYPE_FACTION_DEATH,
         // A whole faction dies
@@ -24,32 +23,32 @@ public class EndCondition implements ISavable
     /**
      * If true, it is a victory condition, otherwise a defeat
      */
-    boolean mVictory;
+    private boolean mVictory;
 
     private final static String M_VICTORY = "Victory";
 
     /**
      * The type of EndCondition
      */
-    EndConditionType mType;
+    private EndConditionType mType;
 
     private final static String M_TYPE = "Type";
 
     /**
      * The faction death triggers the condition
      */
-    Faction mFaction;
+    private Faction mFaction;
 
     private final static String M_FACTION = "Faction";
 
     /**
      * The unit whose death triggers the condition
      */
-    BattleUnit mUnit;
+    private BattleUnit mUnit;
 
     private final static String M_UNIT = "Unit";
 
-    public EndCondition()
+    private EndCondition()
     {
         mFaction = null;
         mUnit = null;
@@ -79,7 +78,8 @@ public class EndCondition implements ISavable
 
                 for ( BattleUnit oUnit : vecUnits )
                 {
-                    if ( oUnit.GetUnit().GetFaction() == mFaction && oUnit.GetCurrentHitPoints() > 0 )
+                    if ( oUnit.GetUnit().GetFaction() == mFaction &&
+                            oUnit.GetCurrentHitPoints() > 0 )
                     {
                         return false;
                     }
@@ -96,40 +96,43 @@ public class EndCondition implements ISavable
         return mVictory;
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putBoolean( M_VICTORY, mVictory );
-        oObjectMap.putInt( M_TYPE, mType.ordinal() );
-        oObjectMap.putInt( M_FACTION, mFaction.ordinal() );
+        oObjectStore.putBoolean( M_VICTORY, mVictory );
+        oObjectStore.putInt( M_TYPE, mType.ordinal() );
+        oObjectStore.putInt( M_FACTION, mFaction.ordinal() );
 
-        String strObjKey = SavableHelper.saveInMap( mUnit, oGlobalMap );
-        oObjectMap.putString( M_UNIT, strObjKey );
+        String strObjKey = SavableHelper.saveInStore( mUnit, oGlobalStore );
+        oObjectStore.putString( M_UNIT, strObjKey );
     }
 
-    public static EndCondition loadState( Bundle oGlobalMap, String strObjKey )
+    public static EndCondition loadState( IStorage oGlobalStore,
+                                          String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             EndCondition.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, EndCondition.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         EndCondition oCondition = new EndCondition();
 
-        oCondition.mVictory = oObjectBundle.getBoolean( M_VICTORY );
-        oCondition.mType = EndConditionType.values()[ oObjectBundle.getInt( M_TYPE ) ];
-        oCondition.mFaction = Faction.values()[ oObjectBundle.getInt( M_FACTION ) ];
+        oCondition.mVictory = oObjectStore.getBoolean( M_VICTORY );
+        oCondition.mType =
+                EndConditionType.values()[ oObjectStore.getInt( M_TYPE ) ];
+        oCondition.mFaction =
+                Faction.values()[ oObjectStore.getInt( M_FACTION ) ];
 
-        String strKey = oObjectBundle.getString( M_UNIT );
-        oCondition.mUnit = BattleUnit.loadState( oObjectBundle, strKey );
+        String strKey = oObjectStore.getString( M_UNIT );
+        oCondition.mUnit = BattleUnit.loadState( oObjectStore, strKey );
 
         return oCondition;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

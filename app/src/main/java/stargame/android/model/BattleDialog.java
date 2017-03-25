@@ -1,10 +1,9 @@
 package stargame.android.model;
 
-import android.os.Bundle;
-
 import java.util.Vector;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 /**
@@ -14,51 +13,53 @@ import stargame.android.storage.SavableHelper;
  */
 public class BattleDialog implements ISavable
 {
-    protected static class Dialog implements ISavable
+    private static class Dialog implements ISavable
     {
-        public int mTextID;
+        int mTextID;
         private static final String M_TEXT_ID = "Text";
 
-        public BattleUnit mTalkingUnit;
+        BattleUnit mTalkingUnit;
         private static final String M_UNIT = "Unit";
 
-        public Dialog()
+        Dialog()
         {
             mTextID = -1;
             mTalkingUnit = null;
         }
 
-        public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+        public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
         {
-            oObjectMap.putInt( M_TEXT_ID, mTextID );
+            oObjectStore.putInt( M_TEXT_ID, mTextID );
 
-            String strObjKey = SavableHelper.saveInMap( mTalkingUnit, oGlobalMap );
-            oObjectMap.putString( M_UNIT, strObjKey );
+            String strObjKey = SavableHelper.saveInStore( mTalkingUnit,
+                                                          oGlobalStore );
+            oObjectStore.putString( M_UNIT, strObjKey );
         }
 
-        public static Dialog loadState( Bundle oGlobalMap, String strObjKey )
+        public static Dialog loadState( IStorage oGlobalStore, String strObjKey )
         {
-            Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                                 Dialog.class.getName() );
+            IStorage oObjectStore = SavableHelper.retrieveStore(
+                    oGlobalStore, strObjKey,
+                    Dialog.class.getName() );
 
-            if ( oObjectBundle == null )
+            if ( oObjectStore == null )
             {
                 return null;
             }
 
             Dialog oDialog = new Dialog();
 
-            oDialog.mTextID = oObjectBundle.getInt( M_TEXT_ID );
+            oDialog.mTextID = oObjectStore.getInt( M_TEXT_ID );
 
-            String strKey = oObjectBundle.getString( M_UNIT );
-            oDialog.mTalkingUnit = BattleUnit.loadState( oGlobalMap, strKey );
+            String strKey = oObjectStore.getString( M_UNIT );
+            oDialog.mTalkingUnit = BattleUnit.loadState( oGlobalStore, strKey );
 
             return oDialog;
         }
 
-        public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+        public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
         {
-            return loadState( oGlobalMap, strObjKey );
+            return loadState( oGlobalStore, strObjKey );
         }
     }
 
@@ -116,11 +117,10 @@ public class BattleDialog implements ISavable
 
     /**
      * Advance to next dialog.
-     * Returns true if there is a next dialog, false otherwise.
      *
-     * @return
+     * @return true if there is a next dialog, false otherwise.
      */
-    public boolean NextDialog()
+    boolean NextDialog()
     {
         if ( mCurrentDialog < mVecDialogs.size() )
         {
@@ -149,39 +149,42 @@ public class BattleDialog implements ISavable
         return null;
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        String[] astrIds = SavableHelper.saveCollectionInMap( mVecDialogs, oGlobalMap );
-        oObjectMap.putStringArray( M_VEC_DIALOGS, astrIds );
+        String[] astrIds = SavableHelper.saveCollectionInStore( mVecDialogs,
+                                                                oGlobalStore );
+        oObjectStore.putStringArray( M_VEC_DIALOGS, astrIds );
 
-        oObjectMap.putInt( M_CURRENT_DIALOG, mCurrentDialog );
-        oObjectMap.putBoolean( M_CHANGED, mChanged );
+        oObjectStore.putInt( M_CURRENT_DIALOG, mCurrentDialog );
+        oObjectStore.putBoolean( M_CHANGED, mChanged );
     }
 
-    public static BattleDialog loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleDialog loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleDialog.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey,
+                BattleDialog.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         BattleDialog oDialog = new BattleDialog();
 
-        oDialog.mChanged = oObjectBundle.getBoolean( M_CHANGED );
-        oDialog.mCurrentDialog = oObjectBundle.getInt( M_CURRENT_DIALOG );
+        oDialog.mChanged = oObjectStore.getBoolean( M_CHANGED );
+        oDialog.mCurrentDialog = oObjectStore.getInt( M_CURRENT_DIALOG );
 
-        String[] astrIds = oObjectBundle.getStringArray( M_VEC_DIALOGS );
-        SavableHelper.loadCollectionFromMap( oDialog.mVecDialogs, astrIds, oGlobalMap,
-                                             new Dialog() );
+        String[] astrIds = oObjectStore.getStringArray( M_VEC_DIALOGS );
+        SavableHelper.loadCollectionFromStore( oDialog.mVecDialogs, astrIds,
+                                               oGlobalStore,
+                                               new Dialog() );
 
         return oDialog;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

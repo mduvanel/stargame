@@ -3,6 +3,7 @@ package stargame.android.model;
 import android.os.Bundle;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Position;
 
@@ -13,35 +14,36 @@ import stargame.android.util.Position;
  */
 public abstract class RangeBattleAction extends BattleAction
 {
-    protected static class ValidStruct implements ISavable
+    private static class ValidStruct implements ISavable
     {
         public boolean mAvailable;
 
         private static final String M_AVAILABLE = "Available";
 
-        public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+        public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
         {
-            oObjectMap.putBoolean( M_AVAILABLE, mAvailable );
+            oObjectStore.putBoolean( M_AVAILABLE, mAvailable );
         }
 
-        public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+        public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
         {
-            return loadState( oGlobalMap, strObjKey );
+            return loadState( oGlobalStore, strObjKey );
         }
 
-        public static ValidStruct loadState( Bundle oGlobalMap, String strObjKey )
+        public static ValidStruct loadState( IStorage oGlobalStore,
+                                             String strObjKey )
         {
-            Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                                 ValidStruct.class.getName() );
+            IStorage oObjectStore = SavableHelper.retrieveStore(
+                    oGlobalStore, strObjKey, ValidStruct.class.getName() );
 
-            if ( oObjectBundle == null )
+            if ( oObjectStore == null )
             {
                 return null;
             }
 
             ValidStruct oStruct = new ValidStruct();
 
-            oStruct.mAvailable = oObjectBundle.getBoolean( M_AVAILABLE );
+            oStruct.mAvailable = oObjectStore.getBoolean( M_AVAILABLE );
 
             return oStruct;
         }
@@ -61,21 +63,21 @@ public abstract class RangeBattleAction extends BattleAction
     /**
      * Ability range (cells)
      */
-    protected int mRange = 4;
+    private int mRange = 4;
 
     private static final String M_RANGE = "Range";
 
     /**
      * Ability max height distance
      */
-    protected int mHeight = 4;
+    private int mHeight = 4;
 
     private static final String M_HEIGHT = "Height";
 
     /**
      * Action radius
      */
-    protected int mRadius = 0;
+    private int mRadius = 0;
 
     private static final String M_RADIUS = "Radius";
 
@@ -114,7 +116,7 @@ public abstract class RangeBattleAction extends BattleAction
         mVecTargetableCells.clear();
     }
 
-    protected boolean IsActionPossible( Position oPos )
+    private boolean IsActionPossible( Position oPos )
     {
         boolean bTargetOK = oPos.IsInside( 0, 0, mBattle.GetBattleField().GetWidth() - 1,
                                            mBattle.GetBattleField().GetHeight() - 1 );
@@ -174,32 +176,35 @@ public abstract class RangeBattleAction extends BattleAction
         }
     }
 
-    public void SaveBattleActionState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void SaveBattleActionState( IStorage oObjectStore,
+                                       IStorage oGlobalStore )
     {
-        super.SaveBattleActionState( oObjectMap, oGlobalMap );
+        super.SaveBattleActionState( oObjectStore, oGlobalStore );
 
-        oObjectMap.putInt( M_CRIT, mCritChance );
-        oObjectMap.putInt( M_RANGE, mRange );
-        oObjectMap.putInt( M_HEIGHT, mHeight );
-        oObjectMap.putInt( M_RADIUS, mRadius );
+        oObjectStore.putInt( M_CRIT, mCritChance );
+        oObjectStore.putInt( M_RANGE, mRange );
+        oObjectStore.putInt( M_HEIGHT, mHeight );
+        oObjectStore.putInt( M_RADIUS, mRadius );
 
-        Bundle oValidBundle = SavableHelper.saveBidimensionalArrayInMap( mValidArray, oGlobalMap );
-        oObjectMap.putBundle( M_VALID_ARRAY, oValidBundle );
+        IStorage oValidStore = SavableHelper.saveBidimensionalArrayInStore(
+                mValidArray, oGlobalStore );
+        oObjectStore.putStore( M_VALID_ARRAY, oValidStore );
     }
 
-    public void LoadBattleActionState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void LoadBattleActionState( IStorage oObjectStore,
+                                       IStorage oGlobalStore )
     {
-        super.LoadBattleActionState( oObjectMap, oGlobalMap );
+        super.LoadBattleActionState( oObjectStore, oGlobalStore );
 
-        mCritChance = oObjectMap.getInt( M_CRIT );
-        mRange = oObjectMap.getInt( M_RANGE );
-        mHeight = oObjectMap.getInt( M_HEIGHT );
-        mRadius = oObjectMap.getInt( M_RADIUS );
+        mCritChance = oObjectStore.getInt( M_CRIT );
+        mRange = oObjectStore.getInt( M_RANGE );
+        mHeight = oObjectStore.getInt( M_HEIGHT );
+        mRadius = oObjectStore.getInt( M_RADIUS );
 
         InitValidArray();
-        Bundle oArrayBundle = oObjectMap.getBundle( M_VALID_ARRAY );
-        SavableHelper.loadBidimensionalArrayFromMap( mValidArray, oArrayBundle, oGlobalMap,
-                                                     new ValidStruct() );
+        IStorage oArrayStore = oObjectStore.getStore( M_VALID_ARRAY );
+        SavableHelper.loadBidimensionalArrayFromStore(
+                mValidArray, oArrayStore, oGlobalStore, new ValidStruct() );
     }
 
     public boolean IsValidTarget( Position oPos )

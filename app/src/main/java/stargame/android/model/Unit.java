@@ -1,11 +1,11 @@
 package stargame.android.model;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import stargame.android.model.jobs.JobFactory;
 import stargame.android.model.jobs.JobType;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.FieldType;
 
@@ -20,64 +20,64 @@ public class Unit implements ISavable
     /**
      * Constants
      */
-    final static protected int FRONT_ATTACK_CHANCE = 55;
-    final static protected int SIDE_ATTACK_CHANCE = 70;
-    final static protected int BACK_ATTACK_CHANCE = 85;
-    final static protected int CRITICAL_PHYS_CHANCE = 5;
+    final static int FRONT_ATTACK_CHANCE = 55;
+    final static int SIDE_ATTACK_CHANCE = 70;
+    final static int BACK_ATTACK_CHANCE = 85;
+    final static int CRITICAL_PHYS_CHANCE = 5;
 
     /**
      * Level of the unit
      */
-    protected int mLevel;
+    int mLevel;
 
     private static final String M_LEVEL = "Level";
 
     /**
      * XP of the unit
      */
-    protected int mExperience;
+    int mExperience;
 
     private static final String M_EXPERIENCE = "Experience";
 
     /**
      * The unit base attributes
      */
-    protected Attributes mAttributes;
+    Attributes mAttributes;
 
     private static final String M_ATTRIBUTES = "Attributes";
 
     /**
      * The sum of base, job and equipment attributes
      */
-    protected Attributes mResultingAttributes;
+    private Attributes mResultingAttributes;
 
     private static final String M_RESULTING_ATTRIBUTES = "ResultingAttributes";
 
     /**
      * Array containing mvt penalty for each type of field
      */
-    protected int mArrayFieldPenalty[];
+    private int mArrayFieldPenalty[];
 
     private static final String M_ARRAY_PENALTIES = "Penalties";
 
     /**
      * Contains all the equipment pieces
      */
-    protected UnitEquipment mEquipment;
+    private UnitEquipment mEquipment;
 
     private static final String M_EQUIPMENT = "Equipment";
 
     /**
      * Job the unit has
      */
-    protected UnitJob mJob;
+    private UnitJob mJob;
 
     private static final String M_JOB = "Job";
 
     /**
      * Faction of the unit
      */
-    protected Faction mFaction;
+    private Faction mFaction;
 
     private static final String M_FACTION = "Faction";
 
@@ -128,7 +128,7 @@ public class Unit implements ISavable
         SetJob( JobFactory.GetInstance().JobCreate( this, eType, oResources ) );
     }
 
-    void SetJob( UnitJob oJob )
+    private void SetJob( UnitJob oJob )
     {
         mJob = oJob;
 
@@ -146,7 +146,7 @@ public class Unit implements ISavable
         return mJob.GetJobType();
     }
 
-    public void ComputeResultingAttributes()
+    private void ComputeResultingAttributes()
     {
         mResultingAttributes.Reset();
         mResultingAttributes.AddAttributes( mAttributes );
@@ -162,77 +162,80 @@ public class Unit implements ISavable
     /**
      * Return movement penalty for the given type of field
      */
-    public int GetFieldPenalty( FieldType field )
+    int GetFieldPenalty( FieldType field )
     {
         return mArrayFieldPenalty[ field.ordinal() ];
     }
 
-    public void SetFaction( Faction eFaction )
+    void SetFaction( Faction eFaction )
     {
         mFaction = eFaction;
     }
 
-    public Faction GetFaction()
+    Faction GetFaction()
     {
         return mFaction;
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_LEVEL, mLevel );
-        oObjectMap.putInt( M_EXPERIENCE, mExperience );
-        oObjectMap.putInt( M_FACTION, mFaction.ordinal() );
+        oObjectStore.putInt( M_LEVEL, mLevel );
+        oObjectStore.putInt( M_EXPERIENCE, mExperience );
+        oObjectStore.putInt( M_FACTION, mFaction.ordinal() );
 
-        String strObjKey = SavableHelper.saveInMap( mAttributes, oGlobalMap );
-        oObjectMap.putString( M_ATTRIBUTES, strObjKey );
+        String strObjKey = SavableHelper.saveInStore( mAttributes,
+                                                      oGlobalStore );
+        oObjectStore.putString( M_ATTRIBUTES, strObjKey );
 
-        strObjKey = SavableHelper.saveInMap( mResultingAttributes, oGlobalMap );
-        oObjectMap.putString( M_RESULTING_ATTRIBUTES, strObjKey );
+        strObjKey = SavableHelper.saveInStore( mResultingAttributes,
+                                               oGlobalStore );
+        oObjectStore.putString( M_RESULTING_ATTRIBUTES, strObjKey );
 
-        oObjectMap.putIntArray( M_ARRAY_PENALTIES, mArrayFieldPenalty );
+        oObjectStore.putIntArray( M_ARRAY_PENALTIES, mArrayFieldPenalty );
 
-        strObjKey = SavableHelper.saveInMap( mEquipment, oGlobalMap );
-        oObjectMap.putString( M_EQUIPMENT, strObjKey );
+        strObjKey = SavableHelper.saveInStore( mEquipment, oGlobalStore );
+        oObjectStore.putString( M_EQUIPMENT, strObjKey );
 
-        strObjKey = SavableHelper.saveInMap( mJob, oGlobalMap );
-        oObjectMap.putString( M_JOB, strObjKey );
+        strObjKey = SavableHelper.saveInStore( mJob, oGlobalStore );
+        oObjectStore.putString( M_JOB, strObjKey );
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
-    public static Unit loadState( Bundle oGlobalMap, String strObjKey )
+    public static Unit loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             Unit.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey,
+                Unit.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         Unit oUnit = new Unit();
 
-        oUnit.mLevel = oObjectBundle.getInt( M_LEVEL );
-        oUnit.mExperience = oObjectBundle.getInt( M_EXPERIENCE );
-        oUnit.mFaction = Faction.values()[ oObjectBundle.getInt( M_FACTION ) ];
+        oUnit.mLevel = oObjectStore.getInt( M_LEVEL );
+        oUnit.mExperience = oObjectStore.getInt( M_EXPERIENCE );
+        oUnit.mFaction = Faction.values()[ oObjectStore.getInt( M_FACTION ) ];
 
-        String strKey = oObjectBundle.getString( M_ATTRIBUTES );
-        oUnit.mAttributes = Attributes.loadState( oGlobalMap, strKey );
+        String strKey = oObjectStore.getString( M_ATTRIBUTES );
+        oUnit.mAttributes = Attributes.loadState( oGlobalStore, strKey );
 
-        strKey = oObjectBundle.getString( M_RESULTING_ATTRIBUTES );
-        oUnit.mResultingAttributes = Attributes.loadState( oGlobalMap, strKey );
+        strKey = oObjectStore.getString( M_RESULTING_ATTRIBUTES );
+        oUnit.mResultingAttributes = Attributes.loadState( oGlobalStore, strKey );
 
-        oUnit.mArrayFieldPenalty = oObjectBundle.getIntArray( M_ARRAY_PENALTIES );
+        oUnit.mArrayFieldPenalty = oObjectStore.getIntArray( M_ARRAY_PENALTIES );
 
-        strKey = oObjectBundle.getString( M_EQUIPMENT );
-        oUnit.mEquipment = UnitEquipment.loadState( oGlobalMap, strKey );
+        strKey = oObjectStore.getString( M_EQUIPMENT );
+        oUnit.mEquipment = UnitEquipment.loadState( oGlobalStore, strKey );
 
-        strKey = oObjectBundle.getString( M_JOB );
+        strKey = oObjectStore.getString( M_JOB );
         UnitJobFactory oFactory = new UnitJobFactory();
-        oUnit.mJob = oFactory.loadState( oGlobalMap, strKey );
+        oUnit.mJob = oFactory.loadState( oGlobalStore, strKey );
 
         return oUnit;
     }

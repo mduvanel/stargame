@@ -1,9 +1,8 @@
 package stargame.android.model;
 
-import android.os.Bundle;
-
 import stargame.android.R;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Position;
 import stargame.android.util.RandomGenerator;
@@ -17,33 +16,34 @@ public class BattleActionAttack extends BattleAction implements ISavable
 {
     private static class AttackStruct implements ISavable
     {
-        public boolean mAvailable;
+        boolean mAvailable;
 
         private static final String M_AVAILABLE = "Available";
 
-        public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+        public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
         {
-            oObjectMap.putBoolean( M_AVAILABLE, mAvailable );
+            oObjectStore.putBoolean( M_AVAILABLE, mAvailable );
         }
 
-        public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+        public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
         {
-            return loadState( oGlobalMap, strObjKey );
+            return loadState( oGlobalStore, strObjKey );
         }
 
-        public static AttackStruct loadState( Bundle oGlobalMap, String strObjKey )
+        public static AttackStruct loadState( IStorage oGlobalStore,
+                                              String strObjKey )
         {
-            Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                                 AttackStruct.class.getName() );
+            IStorage oObjectStore = SavableHelper.retrieveStore(
+                    oGlobalStore, strObjKey, AttackStruct.class.getName() );
 
-            if ( oObjectBundle == null )
+            if ( oObjectStore == null )
             {
                 return null;
             }
 
             AttackStruct oStruct = new AttackStruct();
 
-            oStruct.mAvailable = oObjectBundle.getBoolean( M_AVAILABLE );
+            oStruct.mAvailable = oObjectStore.getBoolean( M_AVAILABLE );
 
             return oStruct;
         }
@@ -84,7 +84,7 @@ public class BattleActionAttack extends BattleAction implements ISavable
         return false;
     }
 
-    protected void InitAttackArray()
+    private void InitAttackArray()
     {
         mAttackArray = new AttackStruct[ mBattle.GetBattleField().GetWidth() ][ mBattle.GetBattleField().GetHeight() ];
         for ( int i = 0; i < mBattle.GetBattleField().GetWidth(); ++i )
@@ -154,7 +154,7 @@ public class BattleActionAttack extends BattleAction implements ISavable
         mSourceUnit.SetActionPerformed();
     }
 
-    protected boolean IsAttackHeightPossible( Position oTargetPos )
+    private boolean IsAttackHeightPossible( Position oTargetPos )
     {
         return Math.abs(
                 mSourceUnit.GetCell().GetElevation() - mBattle.GetBattleField().GetElevation(
@@ -214,34 +214,36 @@ public class BattleActionAttack extends BattleAction implements ISavable
         return mAttackArray[ oPos.mPosX ][ oPos.mPosY ].mAvailable;
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        super.SaveBattleActionState( oObjectMap, oGlobalMap );
+        super.SaveBattleActionState( oObjectStore, oGlobalStore );
 
-        oObjectMap.putInt( M_DAMAGE, mDamage );
+        oObjectStore.putInt( M_DAMAGE, mDamage );
 
-        Bundle oAttackBundle = SavableHelper.saveBidimensionalArrayInMap( mAttackArray,
-                                                                          oGlobalMap );
-        oObjectMap.putBundle( M_ATTACK_ARRAY, oAttackBundle );
+        IStorage oAttackStore = SavableHelper.saveBidimensionalArrayInStore(
+                mAttackArray, oGlobalStore );
+        oObjectStore.putStore( M_ATTACK_ARRAY, oAttackStore );
     }
 
-    protected void LoadBattleActionAttackState( Bundle oObjectMap, Bundle oGlobalMap )
+    protected void LoadBattleActionAttackState( IStorage oObjectStore,
+                                                IStorage oGlobalStore )
     {
-        mDamage = oObjectMap.getInt( M_DAMAGE );
+        mDamage = oObjectStore.getInt( M_DAMAGE );
 
         InitAttackArray();
-        Bundle oArrayBundle = oObjectMap.getBundle( M_ATTACK_ARRAY );
-        SavableHelper.loadBidimensionalArrayFromMap( mAttackArray, oArrayBundle, oGlobalMap,
-                                                     new AttackStruct() );
+        IStorage oArrayStore = oObjectStore.getStore( M_ATTACK_ARRAY );
+        SavableHelper.loadBidimensionalArrayFromStore(
+                mAttackArray, oArrayStore, oGlobalStore, new AttackStruct() );
     }
 
-    public static BattleActionAttack loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleActionAttack loadState( IStorage oGlobalStore,
+                                                String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleActionAttack.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, BattleActionAttack.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
@@ -249,15 +251,15 @@ public class BattleActionAttack extends BattleAction implements ISavable
         BattleActionAttack oAction = new BattleActionAttack();
 
         // Load parent info
-        oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
+        oAction.LoadBattleActionState( oObjectStore, oGlobalStore );
 
-        oAction.LoadBattleActionAttackState( oObjectBundle, oGlobalMap );
+        oAction.LoadBattleActionAttackState( oObjectStore, oGlobalStore );
 
         return oAction;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

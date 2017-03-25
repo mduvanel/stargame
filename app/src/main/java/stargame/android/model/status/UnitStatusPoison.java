@@ -1,15 +1,14 @@
 package stargame.android.model.status;
 
-import android.os.Bundle;
-
 import stargame.android.R;
 import stargame.android.model.BattleUnit;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
-public class UnitStatusPoison extends UnitStatus
+class UnitStatusPoison extends UnitStatus
 {
-    int mDamagePerTurn;
+    private int mDamagePerTurn;
 
     private final static String M_DPT = "DPT";
 
@@ -54,20 +53,20 @@ public class UnitStatusPoison extends UnitStatus
         }
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        SaveUnitStatusData( oObjectMap, oGlobalMap );
+        SaveUnitStatusData( oObjectStore, oGlobalStore );
 
-        oObjectMap.putInt( M_DPT, mDamagePerTurn );
+        oObjectStore.putInt( M_DPT, mDamagePerTurn );
     }
 
-    public static UnitStatusPoison loadState( Bundle oGlobalMap, String strObjKey )
+    public static UnitStatusPoison loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             UnitStatusPoison.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, UnitStatusPoison.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
@@ -75,15 +74,15 @@ public class UnitStatusPoison extends UnitStatus
         UnitStatusPoison oStatus = new UnitStatusPoison();
 
         // Load parent info
-        oStatus.LoadUnitStatusData( oObjectBundle, oGlobalMap );
+        oStatus.LoadUnitStatusData( oObjectStore, oGlobalStore );
 
-        oStatus.mDamagePerTurn = oObjectBundle.getInt( M_DPT );
+        oStatus.mDamagePerTurn = oObjectStore.getInt( M_DPT );
 
         return oStatus;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

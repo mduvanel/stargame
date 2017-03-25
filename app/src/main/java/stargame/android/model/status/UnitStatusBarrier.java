@@ -1,20 +1,19 @@
 package stargame.android.model.status;
 
-import android.os.Bundle;
-
 import stargame.android.R;
 import stargame.android.model.BattleUnit;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 
 public class UnitStatusBarrier extends UnitStatus
 {
-    int mTotalAbsorbCapacity;
+    private int mTotalAbsorbCapacity;
 
     private final static String M_TOTAL_ABSORB = "Total";
 
-    int mCurrentAbsorbCapacity;
+    private int mCurrentAbsorbCapacity;
 
     private final static String M_CURRENT_ABSORB = "Current";
 
@@ -59,21 +58,22 @@ public class UnitStatusBarrier extends UnitStatus
         return super.TurnPassed();
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        SaveUnitStatusData( oObjectMap, oGlobalMap );
+        SaveUnitStatusData( oObjectStore, oGlobalStore );
 
-        oObjectMap.putInt( M_TOTAL_ABSORB, mTotalAbsorbCapacity );
-        oObjectMap.putInt( M_CURRENT_ABSORB, mCurrentAbsorbCapacity );
+        oObjectStore.putInt( M_TOTAL_ABSORB, mTotalAbsorbCapacity );
+        oObjectStore.putInt( M_CURRENT_ABSORB, mCurrentAbsorbCapacity );
     }
 
-    public static UnitStatusBarrier loadState( Bundle oGlobalMap, String strObjKey )
+    public static UnitStatusBarrier loadState( IStorage oGlobalStore,
+                                               String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             UnitStatusBarrier.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, UnitStatusBarrier.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
@@ -81,17 +81,17 @@ public class UnitStatusBarrier extends UnitStatus
         UnitStatusBarrier oStatus = new UnitStatusBarrier();
 
         // Load parent info
-        oStatus.LoadUnitStatusData( oObjectBundle, oGlobalMap );
+        oStatus.LoadUnitStatusData( oObjectStore, oGlobalStore );
 
-        oStatus.mTotalAbsorbCapacity = oObjectBundle.getInt( M_TOTAL_ABSORB );
-        oStatus.mCurrentAbsorbCapacity = oObjectBundle.getInt( M_CURRENT_ABSORB );
+        oStatus.mTotalAbsorbCapacity = oObjectStore.getInt( M_TOTAL_ABSORB );
+        oStatus.mCurrentAbsorbCapacity = oObjectStore.getInt( M_CURRENT_ABSORB );
 
         return oStatus;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
     @Override

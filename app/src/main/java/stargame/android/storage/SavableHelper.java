@@ -1,113 +1,127 @@
 package stargame.android.storage;
 
 
-import android.os.Bundle;
-
 import java.util.Collection;
-
 import stargame.android.util.Logger;
 import stargame.android.util.Tree;
 import stargame.android.util.TreeNode;
 
 /**
  * Helper class to facilitate saving ISavable items.
- * Inside the main Bundle, every ISavable-derived class has its own
- * sub-bundle in which all class instances will be saved in their
- * own bundle:
- * <p/>
- * Base Bundle
- * - Class A Bundle
- * -- instance1 Bundle
- * -- instance2 Bundle
- * - Class B Bundle
- * -- instance1 Bundle
+ * Inside the main IStorage, every ISavable-derived class has its own
+ * sub-store in which all class instances will be saved in their
+ * own store:
+ *
+ * Base IStorage
+ * - Class A IStorage
+ * -- instance1 IStorage
+ * -- instance2 IStorage
+ * - Class B IStorage
+ * -- instance1 IStorage
  * ...
  *
  * @author Duduche
  */
 public class SavableHelper
 {
-    public static Bundle getClassBundle( ISavable oSavable, Bundle oMap )
+    private static IStorageFactory mFactory;
+
+    public static void setIStorageFactory(IStorageFactory oFactory)
+    {
+        mFactory = oFactory;
+    }
+
+    public static IStorage buildStore()
+    {
+        return mFactory.buildStorage();
+    }
+
+    private static IStorage getClassStore( ISavable oSavable, IStorage oStore )
     {
         // check if the class bundle exists already
         String strClassKey = oSavable.getClass().getName();
-        Bundle oClassBundle = oMap.getBundle( strClassKey );
-        if ( oClassBundle == null )
+        IStorage oClassStore = oStore.getStore( strClassKey );
+        if ( oClassStore == null )
         {
             // Create it
-            oClassBundle = new Bundle();
-            oMap.putBundle( strClassKey, oClassBundle );
+            oClassStore = buildStore();
+            oStore.putStore( strClassKey, oClassStore );
         }
 
-        return oClassBundle;
+        return oClassStore;
     }
 
-    public static String saveInMap( ISavable oSavable, Bundle oGlobalMap )
+    public static String saveInStore( ISavable oSavable,
+                                      IStorage oGlobalStore )
     {
         if ( null == oSavable )
         {
             return "";
         }
 
-        Bundle oClassBundle = getClassBundle( oSavable, oGlobalMap );
+        IStorage oClassStore = getClassStore( oSavable, oGlobalStore );
 
         // check if the object is already saved into the map
         String strObjKey = oSavable.toString();
-        if ( !oClassBundle.containsKey( strObjKey ) )
+        if ( !oClassStore.containsKey( strObjKey ) )
         {
             // first store the bundle (in case there is a reentrant call)
-            Bundle oItemMap = new Bundle();
-            oClassBundle.putBundle( strObjKey, oItemMap );
+            IStorage oItemStore = buildStore();
+            oClassStore.putStore( strObjKey, oItemStore );
 
             // then save the object
-            oSavable.saveState( oItemMap, oGlobalMap );
+            oSavable.saveState( oItemStore, oGlobalStore );
         }
 
         return strObjKey;
     }
 
-    public static < T extends ISavable > String[] saveCollectionInMap( Collection< T > colSavable,
-                                                                       Bundle oGlobalMap )
+    public static < T extends ISavable > String[] saveCollectionInStore(
+            Collection< T > colSavable,
+            IStorage oGlobalStore )
     {
         String[] astrIds = new String[ colSavable.size() ];
         int iCounter = 0;
 
         for ( ISavable oSavable : colSavable )
         {
-            astrIds[ iCounter++ ] = saveInMap( oSavable, oGlobalMap );
+            astrIds[ iCounter++ ] = saveInStore( oSavable, oGlobalStore );
         }
 
         return astrIds;
     }
 
     @SuppressWarnings( "unchecked" )
-    public static < T extends ISavable > void loadCollectionFromMap( Collection< T > colSavable,
-                                                                     String[] astrIds,
-                                                                     Bundle oGlobalMap,
-                                                                     T oTmpInstance )
+    public static < T extends ISavable > void loadCollectionFromStore(
+            Collection< T > colSavable,
+            String[] astrIds,
+            IStorage oGlobalStore,
+            T oTmpInstance )
     {
         colSavable.clear();
 
-        for ( int i = 0; i < astrIds.length; ++i )
+        for ( String strVal : astrIds )
         {
             T oObject = null;
-            if ( astrIds[ i ].length() > 0 )
+            if ( strVal.length() > 0 )
             {
                 // Ugly cast...
-                oObject = ( T ) oTmpInstance.createInstance( oGlobalMap, astrIds[ i ] );
+                oObject = ( T ) oTmpInstance.createInstance( oGlobalStore,
+                                                             strVal );
             }
             colSavable.add( oObject );
         }
     }
 
-    public static < T extends ISavable > String[] saveArrayInMap( ISavable[] aSavables,
-                                                                  Bundle oGlobalMap )
+    private static String[] saveArrayInStore(
+            ISavable[] aSavables,
+            IStorage oGlobalStore )
     {
         String[] astrIds = new String[ aSavables.length ];
 
         for ( int i = 0; i < aSavables.length; ++i )
         {
-            astrIds[ i ] = saveInMap( aSavables[ i ], oGlobalMap );
+            astrIds[ i ] = saveInStore( aSavables[ i ], oGlobalStore );
         }
 
         return astrIds;
@@ -120,34 +134,37 @@ public class SavableHelper
         return String.format( "%s_%d", M_ROW_IDS, iIndex );
     }
 
-    public static < T extends ISavable > Bundle saveBidimensionalArrayInMap( ISavable[][] aSavables,
-                                                                             Bundle oGlobalMap )
+    public static IStorage saveBidimensionalArrayInStore(
+            ISavable[][] aSavables,
+            IStorage oGlobalStore )
     {
-        Bundle oBundle = new Bundle();
+        IStorage oStore = buildStore();
 
         for ( int i = 0; i < aSavables.length; ++i )
         {
-            String[] astrIds = saveArrayInMap( aSavables[ i ], oGlobalMap );
-            oBundle.putStringArray( GetRowName( i ), astrIds );
+            String[] astrIds = saveArrayInStore( aSavables[ i ], oGlobalStore );
+            oStore.putStringArray( GetRowName( i ), astrIds );
         }
 
-        return oBundle;
+        return oStore;
     }
 
     @SuppressWarnings( "unchecked" )
-    public static < T extends ISavable > void loadBidimensionalArrayFromMap( T[][] aSavables,
-                                                                             Bundle oObjectMap,
-                                                                             Bundle oGlobalMap,
-                                                                             T oTmpInstance )
+    public static < T extends ISavable > void loadBidimensionalArrayFromStore(
+            T[][] aSavables,
+            IStorage oObjectStore,
+            IStorage oGlobalStore,
+            T oTmpInstance )
     {
         for ( int i = 0; i < aSavables.length; ++i )
         {
-            String[] astrIds = oObjectMap.getStringArray( GetRowName( i ) );
+            String[] astrIds = oObjectStore.getStringArray( GetRowName( i ) );
 
             for ( int j = 0; j < astrIds.length; ++j )
             {
                 // Ugly cast...
-                aSavables[ i ][ j ] = ( T ) oTmpInstance.createInstance( oGlobalMap, astrIds[ j ] );
+                aSavables[ i ][ j ] = ( T ) oTmpInstance.createInstance(
+                        oGlobalStore, astrIds[ j ] );
             }
         }
     }
@@ -160,43 +177,48 @@ public class SavableHelper
         return String.format( "%s_%d", M_TREE_CHILDREN, iIndex );
     }
 
-    public static < T extends ISavable > Bundle saveTreeInMap( Tree< T > oSavableTree,
-                                                               Bundle oGlobalMap )
+    public static < T extends ISavable > IStorage saveTreeInStore(
+            Tree< T > oSavableTree,
+            IStorage oGlobalStore )
     {
         TreeNode< T > oNode = oSavableTree.GetRoot();
-        Bundle oBundle = new Bundle();
-        saveTreeNodeInMap( oNode, oBundle, oGlobalMap );
-        return oBundle;
+        IStorage oStore = buildStore();
+        saveTreeNodeInStore( oNode, oStore, oGlobalStore );
+        return oStore;
     }
 
-    private static < T extends ISavable > void saveTreeNodeInMap( TreeNode< T > oNode,
-                                                                  Bundle oObjectMap,
-                                                                  Bundle oGlobalMap )
+    private static < T extends ISavable > void saveTreeNodeInStore(
+            TreeNode< T > oNode,
+            IStorage oObjectStore,
+            IStorage oGlobalStore )
     {
         if ( oNode.GetData() != null )
         {
-            String strKey = saveInMap( oNode.GetData(), oGlobalMap );
-            oObjectMap.putString( M_TREE_DATA, strKey );
+            String strKey = saveInStore( oNode.GetData(), oGlobalStore );
+            oObjectStore.putString( M_TREE_DATA, strKey );
         }
         else
         {
             int iCount = 0;
             for ( TreeNode< T > oChildNode : oNode.GetChildren() )
             {
-                Bundle oChildBundle = new Bundle();
-                saveTreeNodeInMap( oChildNode, oChildBundle, oGlobalMap );
-                oObjectMap.putBundle( GetChildName( iCount++ ), oChildBundle );
+                IStorage oChildStore = buildStore();
+                saveTreeNodeInStore( oChildNode, oChildStore, oGlobalStore );
+                oObjectStore.putStore( GetChildName( iCount++ ), oChildStore );
             }
         }
     }
 
-    public static < T extends ISavable > Tree< T > loadTreeFromMap( Bundle oObjectMap,
-                                                                    Bundle oGlobalMap,
-                                                                    T oTmpInstance )
+    public static < T extends ISavable > Tree< T > loadTreeFromStore(
+            IStorage oObjectStore,
+            IStorage oGlobalStore,
+            T oTmpInstance )
     {
         Tree< T > oSavableTree = new Tree< T >();
 
-        TreeNode< T > oRootNode = loadTreeNodeFromMap( oObjectMap, oGlobalMap, oTmpInstance );
+        TreeNode< T > oRootNode = loadTreeNodeFromStore( oObjectStore,
+                                                         oGlobalStore,
+                                                         oTmpInstance );
 
         for ( TreeNode< T > oChildNode : oRootNode.GetChildren() )
         {
@@ -207,15 +229,17 @@ public class SavableHelper
     }
 
     @SuppressWarnings( "unchecked" )
-    private static < T extends ISavable > TreeNode< T > loadTreeNodeFromMap( Bundle oObjectMap,
-                                                                             Bundle oGlobalMap,
-                                                                             T oTmpInstance )
+    private static < T extends ISavable > TreeNode< T > loadTreeNodeFromStore(
+            IStorage oObjectStore,
+            IStorage oGlobalStore,
+            T oTmpInstance )
     {
-        if ( oObjectMap.containsKey( M_TREE_DATA ) )
+        if ( oObjectStore.containsKey( M_TREE_DATA ) )
         {
-            String strObjKey = oObjectMap.getString( M_TREE_DATA );
+            String strObjKey = oObjectStore.getString( M_TREE_DATA );
             // Ugly cast...
-            return new TreeNode< T >( ( T ) oTmpInstance.createInstance( oGlobalMap, strObjKey ) );
+            return new TreeNode< T >( ( T ) oTmpInstance.createInstance(
+                    oGlobalStore, strObjKey ) );
         }
         else
         {
@@ -226,11 +250,13 @@ public class SavableHelper
             do
             {
                 String strChildName = GetChildName( iCount++ );
-                Bundle oChildBundle = oObjectMap.getBundle( strChildName );
-                if ( oChildBundle != null )
+                IStorage oChildStore = oObjectStore.getStore( strChildName );
+                if ( oChildStore != null )
                 {
-                    TreeNode< T > oChildNode = loadTreeNodeFromMap( oChildBundle, oGlobalMap,
-                                                                    oTmpInstance );
+                    TreeNode< T > oChildNode = loadTreeNodeFromStore(
+                            oChildStore,
+                            oGlobalStore,
+                            oTmpInstance );
                     oParentNode.AddChild( oChildNode );
                 }
                 else
@@ -243,16 +269,19 @@ public class SavableHelper
         }
     }
 
-    public static Bundle retrieveBundle( Bundle oMap, String strObjKey, String strClassName )
+    public static IStorage retrieveStore( IStorage oStore, String strObjKey,
+                                          String strClassName )
     {
-        Bundle oClassBundle = oMap.getBundle( strClassName );
-        if ( oClassBundle != null )
+        IStorage oClassStore = oStore.getStore( strClassName );
+        if ( oClassStore != null )
         {
-            return oClassBundle.getBundle( strObjKey );
+            return oClassStore.getStore( strObjKey );
         }
 
-        Logger.e( String.format( "Failed to find bundle for instance %s of class %s", strObjKey,
-                                 strClassName ) );
+        Logger.e( String.format(
+                "Failed to find bundle for instance %s of class %s",
+                strObjKey,
+                strClassName ) );
         return null;
     }
 }

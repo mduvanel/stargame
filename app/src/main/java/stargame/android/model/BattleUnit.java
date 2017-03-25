@@ -1,7 +1,6 @@
 package stargame.android.model;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import java.util.NoSuchElementException;
 import java.util.Observable;
@@ -14,6 +13,7 @@ import stargame.android.model.status.UnitStatusBarrier;
 import stargame.android.model.status.UnitStatusFactory;
 import stargame.android.model.status.UnitStatusSlow;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Orientation;
 import stargame.android.util.Position;
@@ -27,12 +27,12 @@ enum UnitControl
     TYPE_CPU
 }
 
-public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
+public class BattleUnit extends Observable implements ISavable
 {
     /**
      * When TimeStep goes above this value, a unit can play
      */
-    protected static final int TIMESTEP_TURN = 100;
+    private static final int TIMESTEP_TURN = 100;
 
     /**
      * Unit object
@@ -126,7 +126,8 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
     }
 
     protected BattleUnit( BattleCell oCell, Orientation oOrientation,
-                          JobType oJobType, Battle oBattle, Resources oResources )
+                          JobType oJobType, Battle oBattle,
+                          Resources oResources )
     {
         mControl = UnitControl.TYPE_PLAYER_1;
         mBattle = oBattle;
@@ -135,9 +136,10 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
         init( oCell, oOrientation );
     }
 
-    protected void AddJobActions()
+    private void AddJobActions()
     {
-        Vector< BattleAction > vecActions = mUnit.GetJob().GetJobBattleActions( mBattle, this );
+        Vector< BattleAction > vecActions = mUnit.GetJob().GetJobBattleActions(
+                mBattle, this );
 
         if ( !vecActions.isEmpty() )
         {
@@ -150,7 +152,7 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
         }
     }
 
-    protected void init( BattleCell oCell, Orientation eOrientation )
+    private void init( BattleCell oCell, Orientation eOrientation )
     {
         SetCell( oCell );
         SetOrientation( eOrientation );
@@ -187,9 +189,10 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
     /**
      * Returns the current movement capacity (including status modifiers)
      */
-    public double GetMovement()
+    double GetMovement()
     {
-        double dResultingMovement = GetUnit().GetResultingAttributes().GetMovement();
+        double dResultingMovement =
+                GetUnit().GetResultingAttributes().GetMovement();
 
         // Check for slow condition
         for ( UnitStatus oStatus : mVecStatus )
@@ -290,64 +293,75 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
 
     public int GetMagicHitChance( BattleUnit oTargetUnit )
     {
-        return mUnit.GetResultingAttributes().GetMagicHitChance() - oTargetUnit.mUnit.GetResultingAttributes().GetMagicDodge();
+        return mUnit.GetResultingAttributes().GetMagicHitChance() -
+                oTargetUnit.mUnit.GetResultingAttributes().GetMagicDodge();
     }
 
     public int GetHitChance( BattleUnit oTargetUnit )
     {
-        int iChance = mUnit.GetResultingAttributes().GetHitChance() + GetHitChanceOrientation(
-                oTargetUnit );
+        int iChance = mUnit.GetResultingAttributes().GetHitChance() +
+                GetHitChanceOrientation( oTargetUnit );
         return iChance - oTargetUnit.mUnit.GetResultingAttributes().GetDodge();
     }
 
     /**
      * Returns the additive chance to hit with respect to frontal attack
      */
-    protected int GetHitChanceOrientation( BattleUnit oTargetUnit )
+    private int GetHitChanceOrientation( BattleUnit oTargetUnit )
     {
-        int iDiffX = oTargetUnit.GetCell().GetPos().mPosX - this.GetCell().GetPos().mPosX;
-        int iDiffY = oTargetUnit.GetCell().GetPos().mPosY - this.GetCell().GetPos().mPosY;
+        int iDiffX = oTargetUnit.GetCell().GetPos().mPosX -
+                this.GetCell().GetPos().mPosX;
+        int iDiffY = oTargetUnit.GetCell().GetPos().mPosY -
+                this.GetCell().GetPos().mPosY;
 
         switch ( oTargetUnit.GetOrientation() )
         {
             case EAST: // East = pointing right
                 if ( iDiffX > Math.abs( iDiffY ) )
                 {
-                    return Unit.BACK_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE; // from Behind
+                    // from Behind
+                    return Unit.BACK_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE;
                 }
                 else if ( Math.abs( iDiffY ) > Math.abs( iDiffX ) )
                 {
-                    return Unit.SIDE_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE; // from the side
+                    // from the side
+                    return Unit.SIDE_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE;
                 }
                 break;
             case WEST: // West = pointing left
                 if ( -iDiffX > Math.abs( iDiffY ) )
                 {
-                    return Unit.BACK_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE; // from Behind
+                    // from Behind
+                    return Unit.BACK_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE;
                 }
                 else if ( Math.abs( iDiffY ) > Math.abs( iDiffX ) )
                 {
-                    return Unit.SIDE_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE; // from the side
+                    // from the side
+                    return Unit.SIDE_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE;
                 }
                 break;
             case NORTH: // North = pointing up
                 if ( iDiffY > Math.abs( iDiffX ) )
                 {
-                    return Unit.BACK_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE; // from Behind
+                    // from Behind
+                    return Unit.BACK_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE;
                 }
                 else if ( Math.abs( iDiffX ) > Math.abs( iDiffY ) )
                 {
-                    return Unit.SIDE_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE; // from the side
+                    // from the side
+                    return Unit.SIDE_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE;
                 }
                 break;
             case SOUTH: // South = pointing down
                 if ( -iDiffY > Math.abs( iDiffX ) )
                 {
-                    return Unit.BACK_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE; // from Behind
+                    // from Behind
+                    return Unit.BACK_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE;
                 }
                 else if ( Math.abs( iDiffX ) > Math.abs( iDiffY ) )
                 {
-                    return Unit.SIDE_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE; // from the side
+                    // from the side
+                    return Unit.SIDE_ATTACK_CHANCE - Unit.FRONT_ATTACK_CHANCE;
                 }
                 break;
             case NONE:
@@ -394,7 +408,8 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
     }
 
     /**
-     * Method called after damage resolution. Handles attribution of damage to the unit.
+     * Method called after damage resolution. Handles attribution of damage to
+     * the unit.
      * Returns actual damage done.
      */
     public int ApplyDamage( double dDamage )
@@ -451,75 +466,81 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
         return iFinalHeal;
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_TIMESTEP, mTimeStep );
-        oObjectMap.putInt( M_CUR_HEALTH, mCurrentHealth );
-        oObjectMap.putInt( M_CUR_RESOURCE, mCurrentResource );
-        oObjectMap.putInt( M_ORIENTATION, mOrientation.ordinal() );
-        oObjectMap.putInt( M_CONTROL, mControl.ordinal() );
-        oObjectMap.putBoolean( M_MOVE_DONE, mMovePerformed );
-        oObjectMap.putBoolean( M_ACTION_DONE, mActionPerformed );
+        oObjectStore.putInt( M_TIMESTEP, mTimeStep );
+        oObjectStore.putInt( M_CUR_HEALTH, mCurrentHealth );
+        oObjectStore.putInt( M_CUR_RESOURCE, mCurrentResource );
+        oObjectStore.putInt( M_ORIENTATION, mOrientation.ordinal() );
+        oObjectStore.putInt( M_CONTROL, mControl.ordinal() );
+        oObjectStore.putBoolean( M_MOVE_DONE, mMovePerformed );
+        oObjectStore.putBoolean( M_ACTION_DONE, mActionPerformed );
 
-        String strObjKey = SavableHelper.saveInMap( mCell, oGlobalMap );
-        oObjectMap.putString( M_CELL, strObjKey );
+        String strObjKey = SavableHelper.saveInStore( mCell, oGlobalStore );
+        oObjectStore.putString( M_CELL, strObjKey );
 
-        strObjKey = SavableHelper.saveInMap( mBattle, oGlobalMap );
-        oObjectMap.putString( M_BATTLE, strObjKey );
+        strObjKey = SavableHelper.saveInStore( mBattle, oGlobalStore );
+        oObjectStore.putString( M_BATTLE, strObjKey );
 
-        String[] astrIds = SavableHelper.saveCollectionInMap( mVecStatus, oGlobalMap );
-        oObjectMap.putStringArray( M_VEC_STATUS, astrIds );
+        String[] astrIds = SavableHelper.saveCollectionInStore( mVecStatus,
+                                                                oGlobalStore );
+        oObjectStore.putStringArray( M_VEC_STATUS, astrIds );
 
-        Bundle oTreeBundle = SavableHelper.saveTreeInMap( mTreeActions, oGlobalMap );
-        oObjectMap.putBundle( M_TREE_ACTIONS, oTreeBundle );
+        IStorage oTreeStore = SavableHelper.saveTreeInStore( mTreeActions,
+                                                             oGlobalStore );
+        oObjectStore.putStore( M_TREE_ACTIONS, oTreeStore );
 
-        strObjKey = SavableHelper.saveInMap( mUnit, oGlobalMap );
-        oObjectMap.putString( M_UNIT, strObjKey );
+        strObjKey = SavableHelper.saveInStore( mUnit, oGlobalStore );
+        oObjectStore.putString( M_UNIT, strObjKey );
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
-    public static BattleUnit loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleUnit loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleUnit.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, BattleUnit.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         BattleUnit oUnit = new BattleUnit();
 
-        oUnit.mTimeStep = oObjectBundle.getInt( M_TIMESTEP );
-        oUnit.mCurrentHealth = oObjectBundle.getInt( M_CUR_HEALTH );
-        oUnit.mCurrentResource = oObjectBundle.getInt( M_CUR_RESOURCE );
-        oUnit.mOrientation = Orientation.values()[ oObjectBundle.getInt( M_ORIENTATION ) ];
-        oUnit.mControl = UnitControl.values()[ oObjectBundle.getInt( M_CONTROL ) ];
-        oUnit.mMovePerformed = oObjectBundle.getBoolean( M_MOVE_DONE );
-        oUnit.mActionPerformed = oObjectBundle.getBoolean( M_ACTION_DONE );
+        oUnit.mTimeStep = oObjectStore.getInt( M_TIMESTEP );
+        oUnit.mCurrentHealth = oObjectStore.getInt( M_CUR_HEALTH );
+        oUnit.mCurrentResource = oObjectStore.getInt( M_CUR_RESOURCE );
+        oUnit.mOrientation =
+                Orientation.values()[ oObjectStore.getInt( M_ORIENTATION ) ];
+        oUnit.mControl =
+                UnitControl.values()[ oObjectStore.getInt( M_CONTROL ) ];
+        oUnit.mMovePerformed = oObjectStore.getBoolean( M_MOVE_DONE );
+        oUnit.mActionPerformed = oObjectStore.getBoolean( M_ACTION_DONE );
 
-        String strKey = oObjectBundle.getString( M_CELL );
-        oUnit.mCell = BattleCell.loadState( oGlobalMap, strKey );
+        String strKey = oObjectStore.getString( M_CELL );
+        oUnit.mCell = BattleCell.loadState( oGlobalStore, strKey );
 
-        strKey = oObjectBundle.getString( M_BATTLE );
-        oUnit.mBattle = Battle.loadState( oGlobalMap, strKey );
+        strKey = oObjectStore.getString( M_BATTLE );
+        oUnit.mBattle = Battle.loadState( oGlobalStore, strKey );
 
-        String[] astrIds = oObjectBundle.getStringArray( M_VEC_STATUS );
+        String[] astrIds = oObjectStore.getStringArray( M_VEC_STATUS );
         UnitStatusFactory oFactory = new UnitStatusFactory();
-        for ( int i = 0; i < astrIds.length; ++i )
+        for ( String strVal : astrIds )
         {
-            oUnit.mVecStatus.add( oFactory.loadState( oGlobalMap, astrIds[ i ] ) );
+            oUnit.mVecStatus.add(
+                    oFactory.loadState( oGlobalStore, strVal ) );
         }
 
-        Bundle oTreeBundle = oObjectBundle.getBundle( M_TREE_ACTIONS );
-        SavableHelper.loadTreeFromMap( oTreeBundle, oGlobalMap, new BattleActionFactory() );
+        IStorage oTreeStore = oObjectStore.getStore( M_TREE_ACTIONS );
+        SavableHelper.loadTreeFromStore(
+                oTreeStore, oGlobalStore, new BattleActionFactory() );
 
-        strKey = oObjectBundle.getString( M_UNIT );
-        oUnit.mUnit = Unit.loadState( oGlobalMap, strKey );
+        strKey = oObjectStore.getString( M_UNIT );
+        oUnit.mUnit = Unit.loadState( oGlobalStore, strKey );
 
         return oUnit;
     }
@@ -529,7 +550,7 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
         return mVecStatus;
     }
 
-    public void TimeStep()
+    void TimeStep()
     {
         // Do not continue time stepping if we are dead
         if ( GetCurrentHitPoints() > 0 )
@@ -542,7 +563,7 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
      * Called at the beginning of the turn of a BattleUnit,
      * resolves all periodic status ailments
      */
-    public void TurnPassed()
+    void TurnPassed()
     {
         // pass turn for all status ailments
         for ( UnitStatus oStatus : mVecStatus )
@@ -561,7 +582,7 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
         mTimeStep -= TIMESTEP_TURN;
     }
 
-    public boolean IsReady()
+    boolean IsReady()
     {
         return ( mTimeStep >= TIMESTEP_TURN );
     }
@@ -569,7 +590,7 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
     /**
      * When ready, returns a float between 0 and 1
      */
-    public float ReadySince()
+    float ReadySince()
     {
         if ( IsReady() )
         {
@@ -585,7 +606,7 @@ public class BattleUnit extends Observable/*extends Unit*/ implements ISavable
         return mMovePerformed;
     }
 
-    public void SetMovePerformed()
+    void SetMovePerformed()
     {
         mMovePerformed = true;
     }

@@ -1,7 +1,5 @@
 package stargame.android.model.jobs.priest;
 
-import android.os.Bundle;
-
 import stargame.android.R;
 import stargame.android.model.Battle;
 import stargame.android.model.BattleCell;
@@ -9,6 +7,7 @@ import stargame.android.model.BattleUnit;
 import stargame.android.model.RangeBattleAction;
 import stargame.android.model.status.UnitStatusBarrier;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 
@@ -25,7 +24,7 @@ public class BattleActionBarrier extends RangeBattleAction implements ISavable
 
     private static final int M_DEFAULT_DURATION = 4;
 
-    BattleActionBarrier()
+    private BattleActionBarrier()
     {
         super();
     }
@@ -73,20 +72,21 @@ public class BattleActionBarrier extends RangeBattleAction implements ISavable
         mSourceUnit.SetActionPerformed();
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        super.SaveBattleActionState( oObjectMap, oGlobalMap );
+        super.SaveBattleActionState( oObjectStore, oGlobalStore );
 
-        oObjectMap.putInt( M_DURATION, mBarrierDuration );
+        oObjectStore.putInt( M_DURATION, mBarrierDuration );
     }
 
-    public static BattleActionBarrier loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleActionBarrier loadState( IStorage oGlobalStore,
+                                                 String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleActionBarrier.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, BattleActionBarrier.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
@@ -94,15 +94,15 @@ public class BattleActionBarrier extends RangeBattleAction implements ISavable
         BattleActionBarrier oAction = new BattleActionBarrier();
 
         // Load parent info
-        oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
+        oAction.LoadBattleActionState( oObjectStore, oGlobalStore );
 
-        oAction.mBarrierDuration = oObjectBundle.getInt( M_DURATION );
+        oAction.mBarrierDuration = oObjectStore.getInt( M_DURATION );
 
         return oAction;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

@@ -1,7 +1,6 @@
 package stargame.android.model.jobs.priest;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import java.util.Vector;
 
@@ -13,6 +12,7 @@ import stargame.android.model.UnitJob;
 import stargame.android.model.jobs.IJobCreator;
 import stargame.android.model.jobs.JobType;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 public class UnitJobPriest extends UnitJob
@@ -22,7 +22,7 @@ public class UnitJobPriest extends UnitJob
         super();
     }
 
-    public UnitJobPriest( Unit oUnit, Resources oResources )
+    private UnitJobPriest( Unit oUnit, Resources oResources )
     {
         super( oUnit );
 
@@ -44,31 +44,32 @@ public class UnitJobPriest extends UnitJob
         return new UnitJobPriestCreator();
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        super.SaveUnitJobData( oObjectMap, oGlobalMap );
+        super.SaveUnitJobData( oObjectStore, oGlobalStore );
     }
 
-    public static UnitJobPriest loadState( Bundle oGlobalMap, String strObjKey )
+    public static UnitJobPriest loadState( IStorage oGlobalStore,
+                                           String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             UnitJobPriest.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, UnitJobPriest.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         UnitJobPriest oUnitJob = new UnitJobPriest();
 
-        oUnitJob.LoadUnitJobData( oObjectBundle, oGlobalMap );
+        oUnitJob.LoadUnitJobData( oObjectStore, oGlobalStore );
 
         return oUnitJob;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
     /**
@@ -76,7 +77,8 @@ public class UnitJobPriest extends UnitJob
      */
     private static class UnitJobPriestCreator implements IJobCreator
     {
-        public UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources )
+        public UnitJob JobCreate( Unit oUnit, JobType eType,
+                                  Resources oResources )
         {
             if ( eType == JobType.TYPE_PRIEST )
             {

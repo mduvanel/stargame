@@ -1,12 +1,12 @@
 package stargame.android.model;
 
 import android.content.Context;
-import android.os.Bundle;
 
 import java.util.Observable;
 import java.util.Vector;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Position;
 import stargame.android.view.BattleThread2D;
@@ -115,35 +115,37 @@ public abstract class BattleAction extends Observable implements ISavable
             mCell = oCell;
         }
 
-        public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+        public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
         {
-            String strObjKey = SavableHelper.saveInMap( mCell, oGlobalMap );
-            oObjectMap.putString( M_CELL, strObjKey );
-            oObjectMap.putInt( M_STATUS, mActionStatus.ordinal() );
+            String strObjKey = SavableHelper.saveInStore( mCell, oGlobalStore );
+            oObjectStore.putString( M_CELL, strObjKey );
+            oObjectStore.putInt( M_STATUS, mActionStatus.ordinal() );
         }
 
-        public ActionTarget loadState( Bundle oGlobalMap, String strObjKey )
+        public ActionTarget loadState( IStorage oGlobalStore, String strObjKey )
         {
-            Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                                 ActionTarget.class.getName() );
+            IStorage oObjectStore = SavableHelper.retrieveStore(
+                    oGlobalStore, strObjKey, ActionTarget.class.getName() );
 
-            if ( oObjectBundle == null )
+            if ( oObjectStore == null )
             {
                 return null;
             }
 
             ActionTarget oTarget = new ActionTarget();
 
-            String strKey = oObjectBundle.getString( M_CELL );
-            oTarget.mCell = BattleCell.loadState( oGlobalMap, strKey );
-            oTarget.mActionStatus = ActionStatus.values()[ oObjectBundle.getInt( M_STATUS ) ];
+            String strKey = oObjectStore.getString( M_CELL );
+            oTarget.mCell = BattleCell.loadState( oGlobalStore, strKey );
+            oTarget.mActionStatus =
+                    ActionStatus.values()[ oObjectStore.getInt( M_STATUS ) ];
 
             return oTarget;
         }
 
-        public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+        public ISavable createInstance(
+                IStorage oGlobalStore, String strObjKey )
         {
-            return loadState( oGlobalMap, strObjKey );
+            return loadState( oGlobalStore, strObjKey );
         }
     }
 
@@ -259,43 +261,50 @@ public abstract class BattleAction extends Observable implements ISavable
         notifyObservers();
     }
 
-    protected void SaveBattleActionState( Bundle oObjectMap, Bundle oGlobalMap )
+    protected void SaveBattleActionState( IStorage oObjectStore,
+                                          IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_STATE, mState.ordinal() );
-        oObjectMap.putInt( M_TYPE, mActionType );
-        oObjectMap.putString( M_NAME, mName );
+        oObjectStore.putInt( M_STATE, mState.ordinal() );
+        oObjectStore.putInt( M_TYPE, mActionType );
+        oObjectStore.putString( M_NAME, mName );
 
-        String[] astrIds = SavableHelper.saveCollectionInMap( mVecTargets, oGlobalMap );
-        oObjectMap.putStringArray( M_VEC_TARGETS, astrIds );
+        String[] astrIds = SavableHelper.saveCollectionInStore( mVecTargets,
+                                                                oGlobalStore );
+        oObjectStore.putStringArray( M_VEC_TARGETS, astrIds );
 
-        astrIds = SavableHelper.saveCollectionInMap( mVecTargetableCells, oGlobalMap );
-        oObjectMap.putStringArray( M_VEC_CELLS, astrIds );
+        astrIds = SavableHelper.saveCollectionInStore( mVecTargetableCells,
+                                                       oGlobalStore );
+        oObjectStore.putStringArray( M_VEC_CELLS, astrIds );
 
-        String strObjKey = SavableHelper.saveInMap( mSourceUnit, oGlobalMap );
-        oObjectMap.putString( M_SOURCE_UNIT, strObjKey );
+        String strObjKey = SavableHelper.saveInStore( mSourceUnit,
+                                                      oGlobalStore );
+        oObjectStore.putString( M_SOURCE_UNIT, strObjKey );
 
-        strObjKey = SavableHelper.saveInMap( mBattle, oGlobalMap );
-        oObjectMap.putString( M_BATTLE, strObjKey );
+        strObjKey = SavableHelper.saveInStore( mBattle, oGlobalStore );
+        oObjectStore.putString( M_BATTLE, strObjKey );
     }
 
-    protected void LoadBattleActionState( Bundle oObjectMap, Bundle oGlobalMap )
+    protected void LoadBattleActionState( IStorage oObjectStore,
+                                          IStorage oGlobalStore )
     {
-        mState = BattleActionState.values()[ oObjectMap.getInt( M_STATE ) ];
-        mActionType = oObjectMap.getInt( M_TYPE );
-        mName = oObjectMap.getString( M_NAME );
+        mState = BattleActionState.values()[ oObjectStore.getInt( M_STATE ) ];
+        mActionType = oObjectStore.getInt( M_TYPE );
+        mName = oObjectStore.getString( M_NAME );
 
-        String[] astrIds = oObjectMap.getStringArray( M_VEC_TARGETS );
-        SavableHelper.loadCollectionFromMap( mVecTargets, astrIds, oGlobalMap, new ActionTarget() );
+        String[] astrIds = oObjectStore.getStringArray( M_VEC_TARGETS );
+        SavableHelper.loadCollectionFromStore(
+                mVecTargets, astrIds, oGlobalStore, new ActionTarget() );
 
-        astrIds = oObjectMap.getStringArray( M_VEC_CELLS );
-        SavableHelper.loadCollectionFromMap( mVecTargetableCells, astrIds, oGlobalMap,
-                                             new Position() );
+        astrIds = oObjectStore.getStringArray( M_VEC_CELLS );
+        SavableHelper.loadCollectionFromStore( mVecTargetableCells, astrIds,
+                                               oGlobalStore,
+                                               new Position() );
 
-        String strObjKey = oObjectMap.getString( M_SOURCE_UNIT );
-        mSourceUnit = BattleUnit.loadState( oGlobalMap, strObjKey );
+        String strObjKey = oObjectStore.getString( M_SOURCE_UNIT );
+        mSourceUnit = BattleUnit.loadState( oGlobalStore, strObjKey );
 
-        strObjKey = oObjectMap.getString( M_BATTLE );
-        mBattle = Battle.loadState( oGlobalMap, strObjKey );
+        strObjKey = oObjectStore.getString( M_BATTLE );
+        mBattle = Battle.loadState( oGlobalStore, strObjKey );
     }
 
     /**

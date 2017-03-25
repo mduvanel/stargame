@@ -2,7 +2,6 @@ package stargame.android.model;
 
 import android.content.res.XmlResourceParser;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.view.MotionEvent;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -12,6 +11,7 @@ import java.io.IOException;
 import java.util.Observable;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.FieldType;
 import stargame.android.util.Position;
@@ -61,7 +61,7 @@ public class BattleField extends Observable implements ISavable
     }
 
     /**
-     * Ctor
+     * Constructor
      */
     public BattleField( int iWidth, int iHeight )
     {
@@ -160,12 +160,8 @@ public class BattleField extends Observable implements ISavable
     {
         BattleUnit oUnitPresent = mArrayCells[ iPosX ][ iPosY ].GetUnit();
 
-        if ( null == oUnitPresent || oUnitPresent.GetUnit().GetFaction() == oUnit.GetUnit().GetFaction() )
-        {
-            return true;
-        }
-
-        return false;
+        return ( null == oUnitPresent ||
+                oUnitPresent.GetUnit().GetFaction() == oUnit.GetUnit().GetFaction() );
     }
 
     public FieldType GetFieldType( Position oPos )
@@ -240,55 +236,59 @@ public class BattleField extends Observable implements ISavable
         }
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_WIDTH, mWidth );
-        oObjectMap.putInt( M_HEIGHT, mHeight );
+        oObjectStore.putInt( M_WIDTH, mWidth );
+        oObjectStore.putInt( M_HEIGHT, mHeight );
 
-        Bundle oCellsBundle = SavableHelper.saveBidimensionalArrayInMap( mArrayCells, oGlobalMap );
-        oObjectMap.putBundle( M_CELLS, oCellsBundle );
+        IStorage oCellsStore = SavableHelper.saveBidimensionalArrayInStore(
+                mArrayCells, oGlobalStore );
+        oObjectStore.putStore( M_CELLS, oCellsStore );
 
         if ( mSelectedCell != null )
         {
-            String strObjKey = SavableHelper.saveInMap( mSelectedCell, oGlobalMap );
-            oObjectMap.putString( M_SELECTED_CELL, strObjKey );
+            String strObjKey = SavableHelper.saveInStore( mSelectedCell,
+                                                          oGlobalStore );
+            oObjectStore.putString( M_SELECTED_CELL, strObjKey );
         }
     }
 
-    public static BattleField loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleField loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleField.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, BattleField.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         BattleField oBattlefield = new BattleField();
 
-        oBattlefield.mWidth = oObjectBundle.getInt( M_WIDTH );
-        oBattlefield.mHeight = oObjectBundle.getInt( M_HEIGHT );
+        oBattlefield.mWidth = oObjectStore.getInt( M_WIDTH );
+        oBattlefield.mHeight = oObjectStore.getInt( M_HEIGHT );
 
-        Bundle oCellsBundle = oObjectBundle.getBundle( M_CELLS );
-        oBattlefield.mArrayCells = new BattleCell[ oBattlefield.mWidth ][ oBattlefield.mHeight ];
-        SavableHelper.loadBidimensionalArrayFromMap(
+        IStorage oCellsStore = oObjectStore.getStore( M_CELLS );
+        oBattlefield.mArrayCells =
+                new BattleCell[ oBattlefield.mWidth ][ oBattlefield.mHeight ];
+        SavableHelper.loadBidimensionalArrayFromStore(
                 oBattlefield.mArrayCells,
-                oCellsBundle,
-                oGlobalMap,
+                oCellsStore,
+                oGlobalStore,
                 new BattleCell() );
 
-        if ( oObjectBundle.containsKey( M_SELECTED_CELL ) )
+        if ( oObjectStore.containsKey( M_SELECTED_CELL ) )
         {
-            String strKey = oObjectBundle.getString( M_SELECTED_CELL );
-            oBattlefield.mSelectedCell = BattleCell.loadState( oGlobalMap, strKey );
+            String strKey = oObjectStore.getString( M_SELECTED_CELL );
+            oBattlefield.mSelectedCell = BattleCell.loadState(
+                    oGlobalStore, strKey );
         }
 
         return oBattlefield;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

@@ -20,6 +20,7 @@ import stargame.android.view.BattleField2D;
 import stargame.android.view.BattleThread2D;
 import stargame.android.view.BattleView2D;
 import stargame.android.view.BitmapRepository;
+import stargame.android.storage.IStorage;
 
 
 /**
@@ -92,6 +93,9 @@ public class BattleActivity extends Activity implements IDPadPeeker
         {
             Logger.w( "With saved Bundle from previous Activity" );
         }
+
+        // Create and set the IStorageFactory at the very beginning
+        SavableHelper.setIStorageFactory(new AndroidStorageFactory());
 
         super.onCreate( savedInstanceState );
 
@@ -201,7 +205,8 @@ public class BattleActivity extends Activity implements IDPadPeeker
         if ( oMap != null )
         {
             String strBattleKey = oMap.getString( M_BATTLE_ID );
-            oBattle = Battle.loadState( oMap, strBattleKey );
+            AndroidStorage oStore = new AndroidStorage( oMap );
+            oBattle = Battle.loadState( oStore, strBattleKey );
         }
         else
         {
@@ -250,7 +255,9 @@ public class BattleActivity extends Activity implements IDPadPeeker
     {
         super.onSaveInstanceState( outState );
 
-        String strObjKey = SavableHelper.saveInMap( mBattle, outState );
+        IStorage oStore = new AndroidStorage( outState );
+
+        String strObjKey = SavableHelper.saveInStore( mBattle, oStore );
         outState.putString( M_BATTLE_ID, strObjKey );
 
         Bundle oControllerMap = new Bundle();

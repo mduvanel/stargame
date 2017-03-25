@@ -1,7 +1,6 @@
 package stargame.android.model.jobs.barbarian;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import java.util.Vector;
 
@@ -13,6 +12,7 @@ import stargame.android.model.UnitJob;
 import stargame.android.model.jobs.IJobCreator;
 import stargame.android.model.jobs.JobType;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 public class UnitJobBarbarian extends UnitJob
@@ -22,7 +22,7 @@ public class UnitJobBarbarian extends UnitJob
         super();
     }
 
-    public UnitJobBarbarian( Unit oUnit, Resources oResources )
+    private UnitJobBarbarian( Unit oUnit, Resources oResources )
     {
         super( oUnit );
 
@@ -31,7 +31,8 @@ public class UnitJobBarbarian extends UnitJob
     }
 
     @Override
-    public Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit )
+    public Vector< BattleAction > GetJobBattleActions( Battle oBattle,
+                                                       BattleUnit oUnit )
     {
         Vector< BattleAction > vecActions = new Vector< BattleAction >();
         vecActions.add( new BattleActionWhirlwind( oBattle, oUnit ) );
@@ -44,31 +45,32 @@ public class UnitJobBarbarian extends UnitJob
         return new UnitJobBarbarianCreator();
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        super.SaveUnitJobData( oObjectMap, oGlobalMap );
+        super.SaveUnitJobData( oObjectStore, oGlobalStore );
     }
 
-    public static UnitJobBarbarian loadState( Bundle oGlobalMap, String strObjKey )
+    public static UnitJobBarbarian loadState( IStorage oGlobalStore,
+                                              String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             UnitJobBarbarian.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, UnitJobBarbarian.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         UnitJobBarbarian oUnitJob = new UnitJobBarbarian();
 
-        oUnitJob.LoadUnitJobData( oObjectBundle, oGlobalMap );
+        oUnitJob.LoadUnitJobData( oObjectStore, oGlobalStore );
 
         return oUnitJob;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
     /**

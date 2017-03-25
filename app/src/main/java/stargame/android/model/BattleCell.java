@@ -3,6 +3,7 @@ package stargame.android.model;
 import android.os.Bundle;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.FieldType;
 import stargame.android.util.Position;
@@ -53,7 +54,7 @@ public class BattleCell implements ISavable
         mType = FieldType.TYPE_NONE;
     }
 
-    protected FieldType fieldFromString( String strType )
+    private FieldType fieldFromString( String strType )
     {
         FieldType eType = FieldType.TYPE_NONE;
 
@@ -94,7 +95,7 @@ public class BattleCell implements ISavable
         this.mType = mType;
     }
 
-    public void SetType( String strType )
+    void SetType( String strType )
     {
         this.mType = fieldFromString( strType );
     }
@@ -104,7 +105,7 @@ public class BattleCell implements ISavable
         return mType;
     }
 
-    public void SetElevation( int mElevation )
+    void SetElevation( int mElevation )
     {
         this.mElevation = mElevation;
     }
@@ -125,7 +126,7 @@ public class BattleCell implements ISavable
         return mPos;
     }
 
-    public void SetUnit( BattleUnit unit )
+    void SetUnit( BattleUnit unit )
     {
         this.mUnit = unit;
     }
@@ -140,48 +141,50 @@ public class BattleCell implements ISavable
         String strCellDesc = String.format( "BattleCell_%d_%d_", i, j );
         BattleCell oCell = new BattleCell( i, j );
 
-        oCell.mType = FieldType.valueOf( oMap.getString( strCellDesc.concat( "FieldType" ) ) );
+        oCell.mType = FieldType.valueOf(
+                oMap.getString( strCellDesc.concat( "FieldType" ) ) );
         oCell.mElevation = oMap.getInt( strCellDesc.concat( "Elevation" ) );
         return oCell;
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_ELEVATION, mElevation );
-        oObjectMap.putString( M_TYPE, mType.toString() );
+        oObjectStore.putInt( M_ELEVATION, mElevation );
+        oObjectStore.putString( M_TYPE, mType.toString() );
 
-        String strObjKey = SavableHelper.saveInMap( mPos, oGlobalMap );
-        oObjectMap.putString( M_POSITION, strObjKey );
+        String strObjKey = SavableHelper.saveInStore( mPos, oGlobalStore );
+        oObjectStore.putString( M_POSITION, strObjKey );
 
         if ( mUnit != null )
         {
-            strObjKey = SavableHelper.saveInMap( mUnit, oGlobalMap );
-            oObjectMap.putString( M_UNIT, strObjKey );
+            strObjKey = SavableHelper.saveInStore( mUnit, oGlobalStore );
+            oObjectStore.putString( M_UNIT, strObjKey );
         }
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
-    public static BattleCell loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleCell loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleCell.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey,
+                BattleCell.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         BattleCell oCell = new BattleCell();
 
-        oCell.mElevation = oObjectBundle.getInt( M_ELEVATION );
-        oCell.mType = FieldType.values()[ oObjectBundle.getInt( M_TYPE ) ];
+        oCell.mElevation = oObjectStore.getInt( M_ELEVATION );
+        oCell.mType = FieldType.values()[ oObjectStore.getInt( M_TYPE ) ];
 
-        String strKey = oObjectBundle.getString( M_POSITION );
-        oCell.mPos = Position.loadState( oGlobalMap, strKey );
+        String strKey = oObjectStore.getString( M_POSITION );
+        oCell.mPos = Position.loadState( oGlobalStore, strKey );
 
         return oCell;
     }

@@ -1,11 +1,10 @@
 package stargame.android.model;
 
-import android.os.Bundle;
-
 import java.util.Vector;
 
 import stargame.android.R;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Logger;
 import stargame.android.util.Orientation;
@@ -34,37 +33,39 @@ public class BattleActionMove extends BattleAction implements ISavable
 
         private static final String M_AVAILABLE = "Available";
 
-        public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+        public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
         {
-            oObjectMap.putBoolean( M_AVAILABLE, mAvailable );
-            oObjectMap.putDouble( M_MOVEMENT, mRemainingMvt );
+            oObjectStore.putBoolean( M_AVAILABLE, mAvailable );
+            oObjectStore.putDouble( M_MOVEMENT, mRemainingMvt );
 
-            String strObjKey = SavableHelper.saveInMap( mSourcePos, oGlobalMap );
-            oObjectMap.putString( M_SOURCE, strObjKey );
+            String strObjKey = SavableHelper.saveInStore( mSourcePos,
+                                                          oGlobalStore );
+            oObjectStore.putString( M_SOURCE, strObjKey );
         }
 
-        public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+        public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
         {
-            return loadState( oGlobalMap, strObjKey );
+            return loadState( oGlobalStore, strObjKey );
         }
 
-        public static MovementStruct loadState( Bundle oGlobalMap, String strObjKey )
+        public static MovementStruct loadState( IStorage oGlobalStore,
+                                                String strObjKey )
         {
-            Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                                 MovementStruct.class.getName() );
+            IStorage oObjectStore = SavableHelper.retrieveStore(
+                    oGlobalStore, strObjKey, MovementStruct.class.getName() );
 
-            if ( oObjectBundle == null )
+            if ( oObjectStore == null )
             {
                 return null;
             }
 
             MovementStruct oStruct = new MovementStruct();
 
-            oStruct.mAvailable = oObjectBundle.getBoolean( M_AVAILABLE );
-            oStruct.mRemainingMvt = oObjectBundle.getDouble( M_MOVEMENT );
+            oStruct.mAvailable = oObjectStore.getBoolean( M_AVAILABLE );
+            oStruct.mRemainingMvt = oObjectStore.getDouble( M_MOVEMENT );
 
-            String strKey = oObjectBundle.getString( M_SOURCE );
-            oStruct.mSourcePos = Position.loadState( oGlobalMap, strKey );
+            String strKey = oObjectStore.getString( M_SOURCE );
+            oStruct.mSourcePos = Position.loadState( oGlobalStore, strKey );
 
             return oStruct;
         }
@@ -94,7 +95,7 @@ public class BattleActionMove extends BattleAction implements ISavable
         mTrajectory = new Vector< Position >();
     }
 
-    public BattleActionMove( Battle oBattle, BattleUnit oUnit )
+    BattleActionMove( Battle oBattle, BattleUnit oUnit )
     {
         super( oBattle, oUnit );
         mTrajectory = new Vector< Position >();
@@ -104,7 +105,7 @@ public class BattleActionMove extends BattleAction implements ISavable
         InitMovementArray();
     }
 
-    protected void InitMovementArray()
+    private void InitMovementArray()
     {
         mMovementArray = new MovementStruct[ mBattle.GetBattleField().GetWidth() ][ mBattle.GetBattleField().GetHeight() ];
         for ( int i = 0; i < mBattle.GetBattleField().GetWidth(); ++i )
@@ -230,7 +231,8 @@ public class BattleActionMove extends BattleAction implements ISavable
      * @param iPosX         la coordonnée X de l'unité
      * @param iPosY         la coordonnée Y de l'unité
      */
-    private void ComputePossibleMvt( BattleUnit oUnit, double dRemainingMvt, int iPosX, int iPosY )
+    private void ComputePossibleMvt( BattleUnit oUnit, double dRemainingMvt,
+                                     int iPosX, int iPosY )
     {
         double dCost = oUnit.GetUnit().GetFieldPenalty(
                 mBattle.GetBattleField().GetFieldType( iPosX, iPosY ) ) / 100;
@@ -261,34 +263,37 @@ public class BattleActionMove extends BattleAction implements ISavable
         // On regarde les sauts
         for ( int i = 1; i < oUnit.GetUnit().GetResultingAttributes().GetHorizontalJump(); ++i )
         {
-            dCost = dCost + 1; // Saut par-dessus des cases, pas de p�nalit� pour le saut
+            // Saut par-dessus des cases, pas de pénalité pour le saut
+            dCost = dCost + 1;
 
             if ( dRemainingMvt < dCost )
             {
                 return;
             }
 
-            if ( iPosX > i && CheckJumpable( iPosX, iPosY, iPosX - ( i + 1 ), iPosY ) )
+            if ( iPosX > i &&
+                    CheckJumpable( iPosX, iPosY, iPosX - ( i + 1 ), iPosY ) )
             {
-                Move( oUnit, iPosX - ( i + 1 ), iPosY, iPosX, iPosY, dCost, dRemainingMvt );
+                Move( oUnit, iPosX - ( i + 1 ), iPosY,
+                      iPosX, iPosY, dCost, dRemainingMvt );
             }
-            if ( iPosY > i && CheckJumpable( iPosX, iPosY, iPosX, iPosY - ( i + 1 ) ) )
+            if ( iPosY > i &&
+                    CheckJumpable( iPosX, iPosY, iPosX, iPosY - ( i + 1 ) ) )
             {
-                Move( oUnit, iPosX, iPosY - ( i + 1 ), iPosX, iPosY, dCost, dRemainingMvt );
+                Move( oUnit, iPosX, iPosY - ( i + 1 ),
+                      iPosX, iPosY, dCost, dRemainingMvt );
             }
-            if ( iPosX < mBattle.GetBattleField().GetWidth() - ( i + 1 ) && CheckJumpable( iPosX,
-                                                                                           iPosY,
-                                                                                           iPosX + i + 1,
-                                                                                           iPosY ) )
+            if ( iPosX < mBattle.GetBattleField().GetWidth() - ( i + 1 ) &&
+                    CheckJumpable( iPosX, iPosY, iPosX + i + 1, iPosY ) )
             {
-                Move( oUnit, iPosX + i + 1, iPosY, iPosX, iPosY, dCost, dRemainingMvt );
+                Move( oUnit, iPosX + i + 1, iPosY,
+                      iPosX, iPosY, dCost, dRemainingMvt );
             }
-            if ( iPosY < mBattle.GetBattleField().GetHeight() - ( i + 1 ) && CheckJumpable( iPosX,
-                                                                                            iPosY,
-                                                                                            iPosX,
-                                                                                            iPosY + i + 1 ) )
+            if ( iPosY < mBattle.GetBattleField().GetHeight() - ( i + 1 ) &&
+                    CheckJumpable( iPosX, iPosY, iPosX, iPosY + i + 1 ) )
             {
-                Move( oUnit, iPosX, iPosY + i + 1, iPosX, iPosY, dCost, dRemainingMvt );
+                Move( oUnit, iPosX, iPosY + i + 1,
+                      iPosX, iPosY, dCost, dRemainingMvt );
             }
         }
     }
@@ -390,28 +395,30 @@ public class BattleActionMove extends BattleAction implements ISavable
         return mMovementArray[ oPos.mPosX ][ oPos.mPosY ].mAvailable;
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        super.SaveBattleActionState( oObjectMap, oGlobalMap );
+        super.SaveBattleActionState( oObjectStore, oGlobalStore );
 
-        String[] astrIds = SavableHelper.saveCollectionInMap( mTrajectory, oGlobalMap );
-        oObjectMap.putStringArray( M_VEC_TRAJECTORY, astrIds );
+        String[] astrIds = SavableHelper.saveCollectionInStore( mTrajectory,
+                                                                oGlobalStore );
+        oObjectStore.putStringArray( M_VEC_TRAJECTORY, astrIds );
 
-        String strObjKey = SavableHelper.saveInMap( mStartPos, oGlobalMap );
-        oObjectMap.putString( M_POSITION, strObjKey );
+        String strObjKey = SavableHelper.saveInStore( mStartPos, oGlobalStore );
+        oObjectStore.putString( M_POSITION, strObjKey );
 
-        Bundle oArrayBundle = SavableHelper.saveBidimensionalArrayInMap( mMovementArray,
-                                                                         oGlobalMap );
-        oObjectMap.putBundle( M_MOVE_ARRAY, oArrayBundle );
+        IStorage oArrayStore = SavableHelper.saveBidimensionalArrayInStore(
+                mMovementArray, oGlobalStore );
+        oObjectStore.putStore( M_MOVE_ARRAY, oArrayStore );
     }
 
-    public static BattleActionMove loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleActionMove loadState( IStorage oGlobalStore,
+                                              String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleActionMove.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, BattleActionMove.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
@@ -419,25 +426,27 @@ public class BattleActionMove extends BattleAction implements ISavable
         BattleActionMove oAction = new BattleActionMove();
 
         // Load parent info
-        oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
+        oAction.LoadBattleActionState( oObjectStore, oGlobalStore );
 
-        String strKey = oObjectBundle.getString( M_POSITION );
-        oAction.mStartPos = Position.loadState( oGlobalMap, strKey );
+        String strKey = oObjectStore.getString( M_POSITION );
+        oAction.mStartPos = Position.loadState( oGlobalStore, strKey );
 
-        String[] astrIds = oObjectBundle.getStringArray( M_VEC_TRAJECTORY );
-        SavableHelper.loadCollectionFromMap( oAction.mTrajectory, astrIds, oGlobalMap,
-                                             new Position() );
+        String[] astrIds = oObjectStore.getStringArray( M_VEC_TRAJECTORY );
+        SavableHelper.loadCollectionFromStore( oAction.mTrajectory, astrIds,
+                                               oGlobalStore,
+                                               new Position() );
 
         oAction.InitMovementArray();
-        Bundle oArrayBundle = oObjectBundle.getBundle( M_MOVE_ARRAY );
-        SavableHelper.loadBidimensionalArrayFromMap( oAction.mMovementArray, oArrayBundle,
-                                                     oGlobalMap, new MovementStruct() );
+        IStorage oArrayStore = oObjectStore.getStore( M_MOVE_ARRAY );
+        SavableHelper.loadBidimensionalArrayFromStore(
+                oAction.mMovementArray, oArrayStore,
+                oGlobalStore, new MovementStruct() );
 
         return oAction;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

@@ -1,12 +1,12 @@
 package stargame.android.model.status;
 
 import android.content.Context;
-import android.os.Bundle;
 
 import java.util.Observable;
 
 import stargame.android.model.BattleUnit;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 public abstract class UnitStatus extends Observable implements ISavable
@@ -32,17 +32,17 @@ public abstract class UnitStatus extends Observable implements ISavable
     /**
      * Name of this status
      */
-    String mName;
+    private String mName;
 
     private final static String M_NAME = "Name";
 
-    public UnitStatus()
+    UnitStatus()
     {
         mTurnsLeft = -1;
         mUnit = null;
     }
 
-    public UnitStatus( int iTurns, BattleUnit oUnit )
+    UnitStatus( int iTurns, BattleUnit oUnit )
     {
         mTurnsLeft = iTurns;
         mUnit = oUnit;
@@ -63,24 +63,24 @@ public abstract class UnitStatus extends Observable implements ISavable
         return ( mTurnsLeft == 0 );
     }
 
-    protected void SaveUnitStatusData( Bundle oObjectMap, Bundle oGlobalMap )
+    void SaveUnitStatusData( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_TYPE, mType );
-        oObjectMap.putInt( M_TURNS, mTurnsLeft );
-        oObjectMap.putString( M_NAME, mName );
+        oObjectStore.putInt( M_TYPE, mType );
+        oObjectStore.putInt( M_TURNS, mTurnsLeft );
+        oObjectStore.putString( M_NAME, mName );
 
-        String strObjKey = SavableHelper.saveInMap( mUnit, oGlobalMap );
-        oObjectMap.putString( M_UNIT, strObjKey );
+        String strObjKey = SavableHelper.saveInStore( mUnit, oGlobalStore );
+        oObjectStore.putString( M_UNIT, strObjKey );
     }
 
-    protected void LoadUnitStatusData( Bundle oObjectMap, Bundle oGlobalMap )
+    void LoadUnitStatusData( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        mType = oObjectMap.getInt( M_TYPE );
-        mTurnsLeft = oObjectMap.getInt( M_TURNS );
-        mName = oObjectMap.getString( M_NAME );
+        mType = oObjectStore.getInt( M_TYPE );
+        mTurnsLeft = oObjectStore.getInt( M_TURNS );
+        mName = oObjectStore.getString( M_NAME );
 
-        String strKey = oObjectMap.getString( M_UNIT );
-        mUnit = BattleUnit.loadState( oGlobalMap, strKey );
+        String strKey = oObjectStore.getString( M_UNIT );
+        mUnit = BattleUnit.loadState( oGlobalStore, strKey );
     }
 
     public int GetType()

@@ -1,19 +1,18 @@
 package stargame.android.model;
 
-import android.os.Bundle;
-
 import java.util.HashMap;
 import java.util.Set;
 
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 /**
  * Centralizes all the unit equipment
  */
-public class UnitEquipment implements ISavable
+class UnitEquipment implements ISavable
 {
-    public static enum EquipmentSlot
+    private enum EquipmentSlot
     {
         HEAD,
         LEGS,
@@ -26,18 +25,19 @@ public class UnitEquipment implements ISavable
     /**
      * Set containing all the armor and weapons
      */
-    protected HashMap< EquipmentSlot, Equipment > mMapEquipment;
+    private HashMap< EquipmentSlot, Equipment > mMapEquipment;
 
     private static final String M_EQUIPMENTS = "Equipments";
 
     /**
      * The resulting attributes of all pieces of equipment
      */
-    protected Attributes mResultingAttributes;
+    private Attributes mResultingAttributes;
 
-    public UnitEquipment()
+    UnitEquipment()
     {
-        mMapEquipment = new HashMap< EquipmentSlot, Equipment >( EquipmentSlot.values().length );
+        mMapEquipment = new HashMap< EquipmentSlot, Equipment >(
+                EquipmentSlot.values().length );
         mResultingAttributes = new Attributes();
         ComputeResultingAttributes();
     }
@@ -98,7 +98,7 @@ public class UnitEquipment implements ISavable
         return mResultingAttributes;
     }
 
-    public void ComputeResultingAttributes()
+    private void ComputeResultingAttributes()
     {
         mResultingAttributes.Reset();
         for ( Equipment oEquipment : mMapEquipment.values() )
@@ -107,47 +107,49 @@ public class UnitEquipment implements ISavable
         }
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore,
+                           IStorage oGlobalStore )
     {
         String strObjKey;
-        Bundle oEquipMap = new Bundle();
+        IStorage oEquipStore = SavableHelper.buildStore();
         Set< EquipmentSlot > setKeys = mMapEquipment.keySet();
         for ( EquipmentSlot oSlot : setKeys )
         {
-            strObjKey = SavableHelper.saveInMap( mMapEquipment.get( oSlot ), oGlobalMap );
-            oEquipMap.putString( oSlot.name(), strObjKey );
+            strObjKey = SavableHelper.saveInStore(
+                    mMapEquipment.get( oSlot ), oGlobalStore );
+            oEquipStore.putString( oSlot.name(), strObjKey );
         }
 
-        oObjectMap.putBundle( M_EQUIPMENTS, oEquipMap );
+        oObjectStore.putStore( M_EQUIPMENTS, oEquipStore );
     }
 
-    public static UnitEquipment loadState( Bundle oGlobalMap, String strObjKey )
+    public static UnitEquipment loadState( IStorage oGlobalStore, String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             UnitEquipment.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, UnitEquipment.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         UnitEquipment oEquip = new UnitEquipment();
 
-        Bundle oKeysMap = oObjectBundle.getBundle( M_EQUIPMENTS );
-        for ( String strSlot : oKeysMap.keySet() )
+        IStorage oKeysStore = oObjectStore.getStore( M_EQUIPMENTS );
+        for ( String strSlot : oKeysStore.keySet() )
         {
-            String strKey = oObjectBundle.getString( strSlot );
+            String strKey = oObjectStore.getString( strSlot );
             oEquip.mMapEquipment.put(
                     EquipmentSlot.valueOf( strSlot ),
-                    Equipment.loadState( oGlobalMap, strKey ) );
+                    Equipment.loadState( oGlobalStore, strKey ) );
         }
 
         oEquip.ComputeResultingAttributes();
         return oEquip;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

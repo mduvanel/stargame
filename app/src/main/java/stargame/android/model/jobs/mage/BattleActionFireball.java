@@ -1,7 +1,5 @@
 package stargame.android.model.jobs.mage;
 
-import android.os.Bundle;
-
 import stargame.android.R;
 import stargame.android.model.Battle;
 import stargame.android.model.BattleCell;
@@ -9,6 +7,7 @@ import stargame.android.model.BattleDialog;
 import stargame.android.model.BattleUnit;
 import stargame.android.model.RangeBattleAction;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 import stargame.android.util.Logger;
 import stargame.android.util.RandomGenerator;
@@ -36,7 +35,7 @@ public class BattleActionFireball extends RangeBattleAction implements ISavable
         mDamage = -1;
     }
 
-    public BattleActionFireball( Battle oBattle, BattleUnit oUnit )
+    BattleActionFireball( Battle oBattle, BattleUnit oUnit )
     {
         super( oBattle, oUnit );
         mActionType = R.string.fireball_action;
@@ -71,16 +70,17 @@ public class BattleActionFireball extends RangeBattleAction implements ISavable
         ActionTarget oTarget = mVecTargets.get( 0 );
 
         // Check if attack lands: compute chance of hitting the target
-        if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <= mSourceUnit.GetMagicHitChance(
-                oTarget.mCell.GetUnit() ) )
+        if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <=
+                mSourceUnit.GetMagicHitChance( oTarget.mCell.GetUnit() ) )
         {
             // Get fireball damage amount
-            double dFinalDamage = Math.max( 1,
-                                            mSourceUnit.GetUnit().GetResultingAttributes().GetMagicPower() -
-                                                    oTarget.mCell.GetUnit().GetUnit().GetResultingAttributes().GetMagicDef() );
+            double dFinalDamage = Math.max(
+                    1, mSourceUnit.GetUnit().GetResultingAttributes().GetMagicPower() -
+                            oTarget.mCell.GetUnit().GetUnit().GetResultingAttributes().GetMagicDef() );
 
             // Check for critical damage
-            if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <= mCritChance )
+            if ( RandomGenerator.GetInstance().GetRandom( 1, 100 ) <=
+                    mCritChance )
             {
                 dFinalDamage *= 1.5;
                 oTarget.mActionStatus = ActionStatus.STATUS_CRITICAL;
@@ -119,18 +119,19 @@ public class BattleActionFireball extends RangeBattleAction implements ISavable
         mSourceUnit.SetActionPerformed();
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        super.SaveBattleActionState( oObjectMap, oGlobalMap );
+        super.SaveBattleActionState( oObjectStore, oGlobalStore );
 
-        oObjectMap.putInt( M_DAMAGE, mDamage );
+        oObjectStore.putInt( M_DAMAGE, mDamage );
     }
 
-    public static BattleActionFireball loadState( Bundle oGlobalMap, String strObjKey )
+    public static BattleActionFireball loadState( IStorage oGlobalStore,
+                                                  String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             BattleActionFireball.class.getName() );
+        IStorage oObjectBundle = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, BattleActionFireball.class.getName() );
 
         if ( oObjectBundle == null )
         {
@@ -140,15 +141,15 @@ public class BattleActionFireball extends RangeBattleAction implements ISavable
         BattleActionFireball oAction = new BattleActionFireball();
 
         // Load parent info
-        oAction.LoadBattleActionState( oObjectBundle, oGlobalMap );
+        oAction.LoadBattleActionState( oObjectBundle, oGlobalStore );
 
         oAction.mDamage = oObjectBundle.getInt( M_DAMAGE );
 
         return oAction;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 }

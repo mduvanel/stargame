@@ -1,7 +1,6 @@
 package stargame.android.model.jobs.archer;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import java.util.Vector;
 
@@ -13,6 +12,7 @@ import stargame.android.model.UnitJob;
 import stargame.android.model.jobs.IJobCreator;
 import stargame.android.model.jobs.JobType;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 public class UnitJobArcher extends UnitJob
@@ -22,7 +22,7 @@ public class UnitJobArcher extends UnitJob
         super();
     }
 
-    public UnitJobArcher( Unit oUnit, Resources oResources )
+    private UnitJobArcher( Unit oUnit, Resources oResources )
     {
         super( oUnit );
 
@@ -30,7 +30,8 @@ public class UnitJobArcher extends UnitJob
         LoadAttributes( oResources );
     }
 
-    public Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit )
+    public Vector< BattleAction > GetJobBattleActions( Battle oBattle,
+                                                       BattleUnit oUnit )
     {
         return new Vector< BattleAction >();
     }
@@ -40,31 +41,32 @@ public class UnitJobArcher extends UnitJob
         return new UnitJobArcherCreator();
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        super.SaveUnitJobData( oObjectMap, oGlobalMap );
+        super.SaveUnitJobData( oObjectStore, oGlobalStore );
     }
 
-    public static UnitJobArcher loadState( Bundle oGlobalMap, String strObjKey )
+    public static UnitJobArcher loadState( IStorage oGlobalStore,
+                                           String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             UnitJobArcher.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, UnitJobArcher.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
 
         UnitJobArcher oUnitJob = new UnitJobArcher();
 
-        oUnitJob.LoadUnitJobData( oObjectBundle, oGlobalMap );
+        oUnitJob.LoadUnitJobData( oObjectStore, oGlobalStore );
 
         return oUnitJob;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
     /**
@@ -72,7 +74,8 @@ public class UnitJobArcher extends UnitJob
      */
     private static class UnitJobArcherCreator implements IJobCreator
     {
-        public UnitJob JobCreate( Unit oUnit, JobType eType, Resources oResources )
+        public UnitJob JobCreate( Unit oUnit, JobType eType,
+                                  Resources oResources )
         {
             if ( eType == JobType.TYPE_ARCHER )
             {

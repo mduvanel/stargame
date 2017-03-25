@@ -1,12 +1,12 @@
 package stargame.android.model;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import java.util.Vector;
 
 import stargame.android.model.jobs.JobType;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 /**
@@ -19,7 +19,7 @@ public abstract class UnitJob implements ISavable
     /**
      * The unit that has this job instance
      */
-    protected Unit mUnit;
+    private Unit mUnit;
 
     private static final String M_UNIT = "Unit";
 
@@ -33,7 +33,7 @@ public abstract class UnitJob implements ISavable
     /**
      * The passive increase in stats (just for having the job)
      */
-    protected Attributes mAttributes;
+    private Attributes mAttributes;
 
     private static final String M_ATTRIBS = "Attributes";
 
@@ -41,7 +41,7 @@ public abstract class UnitJob implements ISavable
      * The bonuses linked to the level-up (actual increase in stats
      * at level-up, when levelling up in a specific job)
      */
-    protected Attributes mLevelUpAttributes;
+    private Attributes mLevelUpAttributes;
 
     private static final String M_LU_ATTRIBS = "LUAttributes";
 
@@ -56,23 +56,23 @@ public abstract class UnitJob implements ISavable
         mLevelUpAttributes = new Attributes();
     }
 
-    public JobType GetJobType()
+    JobType GetJobType()
     {
         return mJobType;
     }
 
-    public void LoadAttributes( Resources oResources )
+    protected void LoadAttributes( Resources oResources )
     {
         mAttributes.LoadFromResources( oResources, mJobType.toString() + "_base_stats" );
         mLevelUpAttributes.LoadFromResources( oResources, mJobType.toString() + "_levelup_stats" );
     }
 
-    public Attributes GetAttributes()
+    Attributes GetAttributes()
     {
         return mAttributes;
     }
 
-    void LevelUp()
+    private void LevelUp()
     {
         mUnit.mAttributes.AddAttributes( mLevelUpAttributes );
         mUnit.mLevel += 1;
@@ -89,32 +89,33 @@ public abstract class UnitJob implements ISavable
         }
     }
 
-    protected void SaveUnitJobData( Bundle oObjectMap, Bundle oGlobalMap )
+    protected void SaveUnitJobData( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        oObjectMap.putInt( M_JOB_TYPE, mJobType.ordinal() );
+        oObjectStore.putInt( M_JOB_TYPE, mJobType.ordinal() );
 
-        String strObjKey = SavableHelper.saveInMap( mUnit, oGlobalMap );
-        oObjectMap.putString( M_UNIT, strObjKey );
+        String strObjKey = SavableHelper.saveInStore( mUnit, oGlobalStore );
+        oObjectStore.putString( M_UNIT, strObjKey );
 
-        strObjKey = SavableHelper.saveInMap( mAttributes, oGlobalMap );
-        oObjectMap.putString( M_ATTRIBS, strObjKey );
+        strObjKey = SavableHelper.saveInStore( mAttributes, oGlobalStore );
+        oObjectStore.putString( M_ATTRIBS, strObjKey );
 
-        strObjKey = SavableHelper.saveInMap( mLevelUpAttributes, oGlobalMap );
-        oObjectMap.putString( M_LU_ATTRIBS, strObjKey );
+        strObjKey = SavableHelper.saveInStore( mLevelUpAttributes,
+                                               oGlobalStore );
+        oObjectStore.putString( M_LU_ATTRIBS, strObjKey );
     }
 
-    protected void LoadUnitJobData( Bundle oObjectMap, Bundle oGlobalMap )
+    protected void LoadUnitJobData( IStorage oObjectStore, IStorage oGlobalStore )
     {
-        mJobType = JobType.values()[ oObjectMap.getInt( M_JOB_TYPE ) ];
+        mJobType = JobType.values()[ oObjectStore.getInt( M_JOB_TYPE ) ];
 
-        String strKey = oObjectMap.getString( M_UNIT );
-        mUnit = Unit.loadState( oGlobalMap, strKey );
+        String strKey = oObjectStore.getString( M_UNIT );
+        mUnit = Unit.loadState( oGlobalStore, strKey );
 
-        strKey = oObjectMap.getString( M_ATTRIBS );
-        mAttributes = Attributes.loadState( oGlobalMap, strKey );
+        strKey = oObjectStore.getString( M_ATTRIBS );
+        mAttributes = Attributes.loadState( oGlobalStore, strKey );
 
-        strKey = oObjectMap.getString( M_LU_ATTRIBS );
-        mLevelUpAttributes = Attributes.loadState( oGlobalMap, strKey );
+        strKey = oObjectStore.getString( M_LU_ATTRIBS );
+        mLevelUpAttributes = Attributes.loadState( oGlobalStore, strKey );
     }
 
     public abstract Vector< BattleAction > GetJobBattleActions( Battle oBattle, BattleUnit oUnit );

@@ -1,10 +1,9 @@
 package stargame.android.model.status;
 
-import android.os.Bundle;
-
 import stargame.android.R;
 import stargame.android.model.BattleUnit;
 import stargame.android.storage.ISavable;
+import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
 
 public class UnitStatusInvisible extends UnitStatus
@@ -30,18 +29,19 @@ public class UnitStatusInvisible extends UnitStatus
         return super.TurnPassed();
     }
 
-    public void saveState( Bundle oObjectMap, Bundle oGlobalMap )
+    public void saveState( IStorage oObjectStore, IStorage oGlobalStore )
     {
         // Save parent info
-        SaveUnitStatusData( oObjectMap, oGlobalMap );
+        SaveUnitStatusData( oObjectStore, oGlobalStore );
     }
 
-    public static UnitStatusInvisible loadState( Bundle oGlobalMap, String strObjKey )
+    public static UnitStatusInvisible loadState( IStorage oGlobalStore,
+                                                 String strObjKey )
     {
-        Bundle oObjectBundle = SavableHelper.retrieveBundle( oGlobalMap, strObjKey,
-                                                             UnitStatusInvisible.class.getName() );
+        IStorage oObjectStore = SavableHelper.retrieveStore(
+                oGlobalStore, strObjKey, UnitStatusInvisible.class.getName() );
 
-        if ( oObjectBundle == null )
+        if ( oObjectStore == null )
         {
             return null;
         }
@@ -49,14 +49,14 @@ public class UnitStatusInvisible extends UnitStatus
         UnitStatusInvisible oStatus = new UnitStatusInvisible();
 
         // Load parent info
-        oStatus.LoadUnitStatusData( oObjectBundle, oGlobalMap );
+        oStatus.LoadUnitStatusData( oObjectStore, oGlobalStore );
 
         return oStatus;
     }
 
-    public ISavable createInstance( Bundle oGlobalMap, String strObjKey )
+    public ISavable createInstance( IStorage oGlobalStore, String strObjKey )
     {
-        return loadState( oGlobalMap, strObjKey );
+        return loadState( oGlobalStore, strObjKey );
     }
 
     @Override

@@ -1,7 +1,6 @@
 package stargame.android.util;
 
 import android.graphics.Rect;
-import android.os.Bundle;
 
 import stargame.android.storage.ISavable;
 import stargame.android.storage.IStorage;
@@ -21,10 +20,10 @@ public class Position implements ISavable
         mPosY = -1;
     }
 
-    public Position( Bundle oMap )
+    public Position( IStorage oStore )
     {
-        mPosX = oMap.getInt( M_POS_X, -1 );
-        mPosY = oMap.getInt( M_POS_Y, -1 );
+        mPosX = oStore.getInt( M_POS_X );
+        mPosY = oStore.getInt( M_POS_Y );
     }
 
     public Position( int iSourceX, int iSourceY )

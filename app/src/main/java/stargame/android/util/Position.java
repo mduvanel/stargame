@@ -1,7 +1,5 @@
 package stargame.android.util;
 
-import android.graphics.Rect;
-
 import stargame.android.storage.ISavable;
 import stargame.android.storage.IStorage;
 import stargame.android.storage.SavableHelper;
@@ -82,11 +80,6 @@ public class Position implements ISavable
     public Position Mul( int iMulX, int iMulY )
     {
         return new Position( mPosX * iMulX, mPosY * iMulY );
-    }
-
-    public boolean IsInside( Rect oRect )
-    {
-        return IsInside( oRect.left, oRect.top, oRect.right, oRect.bottom );
     }
 
     public boolean IsInside( int left, int top, int right, int bottom )

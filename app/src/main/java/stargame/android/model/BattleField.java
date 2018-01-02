@@ -227,7 +227,7 @@ public class BattleField extends Observable implements ISavable
 
     public void SetSelectedCell( Position oPos )
     {
-        if ( oPos.IsInside( new Rect( 0, 0, mWidth - 1, mHeight - 1 ) ) &&
+        if ( oPos.IsInside( 0, 0, mWidth - 1, mHeight - 1 ) &&
                 mArrayCells[ oPos.mPosX ][ oPos.mPosY ] != null )
         {
             mSelectedCell = mArrayCells[ oPos.mPosX ][ oPos.mPosY ];

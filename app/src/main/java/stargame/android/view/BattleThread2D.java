@@ -23,8 +23,8 @@ public class BattleThread2D extends Thread
     /**
      * State-tracking constants
      */
-    public static final int STATE_NODISPLAY = 1;
-    public static final int STATE_RUNNING = 2;
+    private static final int STATE_NO_DISPLAY = 1;
+    private static final int STATE_RUNNING = 2;
 
     /**
      * The state of the game. One of RUNNING or NODISPLAY
@@ -100,7 +100,7 @@ public class BattleThread2D extends Thread
      */
     private Orientation mDrawingOrientation;
 
-    public Orientation GetDrawingOrientation()
+    Orientation GetDrawingOrientation()
     {
         return mDrawingOrientation;
     }
@@ -109,14 +109,14 @@ public class BattleThread2D extends Thread
      * The global object used as a lock for protecting objects that affect
      * behavior of doDraw() methods
      */
-    public static Object mDrawingLock = new Object();
+    public final static Object mDrawingLock = new Object();
 
     private static class DisplayTimerTask extends TimerTask
     {
-        private Object mObject;
+        private final Object mObject;
         boolean mRun;
 
-        public DisplayTimerTask( Object oObj )
+        DisplayTimerTask( Object oObj )
         {
             mObject = oObj;
             mRun = true;
@@ -135,10 +135,9 @@ public class BattleThread2D extends Thread
 
             // Cleanup
             cancel();
-            mObject = null;
         }
 
-        public void doStop()
+        void doStop()
         {
             mRun = false;
         }
@@ -168,7 +167,7 @@ public class BattleThread2D extends Thread
      *
      * @param b true to run, false to shut down
      */
-    public void setRunning( boolean b )
+    private void setRunning( boolean b )
     {
         mRun = b;
     }
@@ -176,7 +175,7 @@ public class BattleThread2D extends Thread
     /**
      * Starts the display thread
      */
-    public void doStart()
+    void doStart()
     {
         if ( !mRun )
         {
@@ -220,7 +219,7 @@ public class BattleThread2D extends Thread
      */
     public void pause()
     {
-        setState( STATE_NODISPLAY );
+        setState( STATE_NO_DISPLAY );
     }
 
     /**
@@ -334,7 +333,7 @@ public class BattleThread2D extends Thread
                                       .GetPos() );
     }
 
-    public void SetSurfaceSize( int iWidth, int iHeight )
+    void SetSurfaceSize( int iWidth, int iHeight )
     {
         mSurfaceWidth = iWidth;
         mSurfaceHeight = iHeight;
@@ -348,9 +347,8 @@ public class BattleThread2D extends Thread
      * failure state, in the victory state, etc.
      *
      * @param mode one of the STATE_* constants
-     * @see #setState(int, CharSequence)
      */
-    public void setState( int mode )
+    private void setState( int mode )
     {
         synchronized ( mDrawingLock )
         {
@@ -365,7 +363,7 @@ public class BattleThread2D extends Thread
      * @param oMsg     the original event object
      * @return false
      */
-    public boolean doKeyDown( int iKeyCode, KeyEvent oMsg )
+    boolean doKeyDown( int iKeyCode, KeyEvent oMsg )
     {
         return false;
     }
@@ -377,7 +375,7 @@ public class BattleThread2D extends Thread
      * @param oMsg     the original event object
      * @return true if the key was handled and consumed, or else false
      */
-    public boolean doKeyUp( int iKeyCode, KeyEvent oMsg )
+    boolean doKeyUp( int iKeyCode, KeyEvent oMsg )
     {
         boolean bHandled = false;
 
@@ -409,7 +407,7 @@ public class BattleThread2D extends Thread
     /**
      * Handles a touch event.
      */
-    public boolean onTouchEvent( MotionEvent oEvent )
+    boolean onTouchEvent( MotionEvent oEvent )
     {
         return mController.onTouchEvent( oEvent, mDrawingOrientation );
     }

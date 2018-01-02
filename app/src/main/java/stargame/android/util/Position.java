@@ -80,11 +80,6 @@ public class Position implements ISavable
         return new Position( mPosX / iDiv, mPosY / iDiv );
     }
 
-    public Position Mul( int iMul )
-    {
-        return new Position( mPosX * iMul, mPosY * iMul );
-    }
-
     public Position Mul( int iMulX, int iMulY )
     {
         return new Position( mPosX * iMulX, mPosY * iMulY );
@@ -153,6 +148,7 @@ public class Position implements ISavable
                 break;
             case EAST:
                 iTmp = iOffsetX;
+                //noinspection SuspiciousNameCombination
                 iOffsetX = iOffsetY;
                 iOffsetY = -iTmp;
                 break;
@@ -195,6 +191,7 @@ public class Position implements ISavable
                 break;
             case WEST:
                 iTmp = iOffsetX;
+                //noinspection SuspiciousNameCombination
                 iOffsetX = iOffsetY;
                 iOffsetY = -iTmp;
                 break;

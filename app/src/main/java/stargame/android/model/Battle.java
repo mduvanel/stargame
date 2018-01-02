@@ -276,10 +276,7 @@ public class Battle extends Observable implements ISavable
         NotifyChange();
     }
 
-    /**
-     * Made public so that Controller can send notifications too...
-     */
-    public void NotifyChange()
+    private void NotifyChange()
     {
         setChanged();
         notifyObservers();

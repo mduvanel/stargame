@@ -21,7 +21,12 @@ class AndroidStorage implements IStorage
     @Override
     public IStorage getStore( String strKey )
     {
-        return new AndroidStorage( mBundle.getBundle( strKey ) );
+        Bundle oBundle = mBundle.getBundle( strKey );
+        if ( null == oBundle )
+        {
+            return null;
+        }
+        return new AndroidStorage( oBundle );
     }
 
     @Override

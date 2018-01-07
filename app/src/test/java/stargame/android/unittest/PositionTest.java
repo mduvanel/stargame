@@ -1,3 +1,5 @@
+package stargame.android.unittest;
+
 import org.junit.Test;
 
 import stargame.android.util.Position;

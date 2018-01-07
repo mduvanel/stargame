@@ -105,11 +105,11 @@ public class BattleActivity extends Activity implements IDPadPeeker
         // Init the BitmapRepository first
         BitmapRepository.Init( getResources() );
 
-        // This creates the Battle object (model)
-        mBattle = CreateBattle( savedInstanceState );
-
         // tell system to use the layout defined in our XML file
         setContentView( R.layout.battle );
+
+        // This (re)creates the Battle object (model)
+        mBattle = CreateBattle( savedInstanceState );
 
         // get handles to the BattleView from XML
         BattleView2D oBattleView = ( BattleView2D ) findViewById( R.id.battle );
@@ -143,7 +143,7 @@ public class BattleActivity extends Activity implements IDPadPeeker
     {
         Log.i( this.getClass().getName(), "onResume() called!" );
         super.onResume();
-        mBattleThread.unpause(); // pause game when Activity pauses
+        mBattleThread.unpause(); // unpause game when Activity resumes
     }
 
     protected void onStart()

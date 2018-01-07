@@ -42,8 +42,6 @@ public class BattleView2D extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
-    ;
-
     /**
      * Proxy for observing the BattleField
      */

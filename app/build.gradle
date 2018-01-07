@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 7
+    compileSdkVersion 9
     buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "stargame.android"
-        minSdkVersion 7
-        targetSdkVersion 7
+        minSdkVersion 9
+        targetSdkVersion 9
 
         testApplicationId "stargame.android.test"
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -24,4 +24,7 @@ android {
 dependencies {
     // Required -- JUnit 4 framework
     testCompile group: 'junit', name: 'junit', version: '4.+'
+    // Required -- Android test support library
+    androidTestCompile 'com.android.support.test:runner:1.+'
+    androidTestCompile 'com.android.support.test:rules:1.+'
 }

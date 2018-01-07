@@ -3,12 +3,16 @@ package stargame.android.test;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
-import android.widget.Button;
 
 import org.junit.Rule;
 import org.junit.Test;
 
+import stargame.android.*;
 import stargame.android.controller.BattleActivity;
+import stargame.android.view.BattleThread2D;
+import stargame.android.view.BattleView2D;
+
+import static org.junit.Assert.assertEquals;
 
 public class BattleActivityValidationTest
 {
@@ -29,6 +33,28 @@ public class BattleActivityValidationTest
     public void testPauseResume()
     {
         BattleActivity activity = rule.getActivity();
-        InstrumentationRegistry.getInstrumentation().callActivityOnRestart(activity);
+        BattleView2D oBattleView = ( BattleView2D ) activity.findViewById( stargame.android.R.id.battle );
+        InstrumentationRegistry.getInstrumentation().callActivityOnPause( activity );
+        assertEquals( oBattleView.GetBattleThread().getMode(),
+                      BattleThread2D.STATE_NO_DISPLAY );
+        InstrumentationRegistry.getInstrumentation().callActivityOnResume( activity );
+        assertEquals( oBattleView.GetBattleThread().getMode(),
+                      BattleThread2D.STATE_RUNNING );
+    }
+
+    @Test
+    public void testStopRestart()
+    {
+        BattleActivity activity = rule.getActivity();
+        BattleView2D oBattleView = ( BattleView2D ) activity.findViewById( stargame.android.R.id.battle );
+        InstrumentationRegistry.getInstrumentation().callActivityOnPause( activity );
+        assertEquals( oBattleView.GetBattleThread().getMode(),
+                      BattleThread2D.STATE_NO_DISPLAY );
+        InstrumentationRegistry.getInstrumentation().callActivityOnStop( activity );
+        InstrumentationRegistry.getInstrumentation().callActivityOnRestart( activity );
+        InstrumentationRegistry.getInstrumentation().callActivityOnStart( activity );
+        InstrumentationRegistry.getInstrumentation().callActivityOnResume( activity );
+        assertEquals( oBattleView.GetBattleThread().getMode(),
+                      BattleThread2D.STATE_RUNNING );
     }
 }

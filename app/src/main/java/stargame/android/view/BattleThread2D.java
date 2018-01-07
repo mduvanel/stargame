@@ -23,8 +23,8 @@ public class BattleThread2D extends Thread
     /**
      * State-tracking constants
      */
-    private static final int STATE_NO_DISPLAY = 1;
-    private static final int STATE_RUNNING = 2;
+    public static final int STATE_NO_DISPLAY = 1;
+    public static final int STATE_RUNNING = 2;
 
     /**
      * The state of the game. One of RUNNING or NODISPLAY
@@ -354,6 +354,11 @@ public class BattleThread2D extends Thread
         {
             mMode = mode;
         }
+    }
+
+    public int getMode()
+    {
+        return mMode;
     }
 
     /**
